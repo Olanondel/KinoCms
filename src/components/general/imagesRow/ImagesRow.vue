@@ -8,6 +8,7 @@
         :image="image"
         :index="index"
         @change="change"
+        :btnText="btnText"
       />
     </div>
   </div>
@@ -23,12 +24,17 @@ export default {
       type: String,
       default: "Размер: 1000х190",
     },
-    data: Array
+    btnText: String,
+    data: {
+      type: Array
+    }
   },
   methods: {
     change(file, index) {
       this.$emit('change', file, index)
     }
+  },
+  computed: {
   }
 };
 </script>

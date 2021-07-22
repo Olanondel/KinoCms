@@ -9,7 +9,7 @@
         <label
             :for="uId" 
             class="btn btn-block btn-primary"
-        >Добавить </label>
+        >{{btnText}} </label>
       </div>
 </template>
 
@@ -17,7 +17,7 @@
 import lodash from 'lodash'
 
     export default {
-        props: { image: String, index: Number },
+        props: { image: String, index: Number, btnText: String },
         methods: {
             change() {
                 let fileInput = document.querySelector('#' + this.uId)

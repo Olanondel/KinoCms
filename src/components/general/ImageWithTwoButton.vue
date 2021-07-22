@@ -4,8 +4,8 @@
         <img :src="image || require('@/assets/image/empty.jpg')" class="input-with-two-button__image" alt="alt">
     
     <input @change="changeImage" type="file" name="file" :id="uId" style="display: none">
-    <label class="btn btn-primary general__button" :for="uId">Загрузить</label>
-    <button @click="removeImage" class="btn btn-danger general__button">Удалить</button>
+    <label class="btn btn-primary general__button" :for="uId">{{addText}}</label>
+    <button @click="removeImage" class="btn btn-danger general__button">{{removeText}}</button>
   </div>
 </template>
 
@@ -19,7 +19,9 @@ import lodash from 'lodash'
             image: {
                 type: String,
                 default: ''
-            }
+            },
+            addText: String,
+            removeText: String
         },
         data() {
             return {

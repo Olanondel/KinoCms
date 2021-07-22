@@ -1,19 +1,33 @@
 <template>
   <div class="lang-tabs">
     <div class="icheck-success d-inline">
-      <input type="radio" name="r3" id="radioSuccess1" checked />
+      <input @change="change" type="radio" name="r3" id="radioSuccess1" value="ru" v-model="picked" />
       <label for="radioSuccess1">Русский</label>
     </div>
 
     <div class="icheck-success d-inline">
-      <input type="radio" name="r3" id="radioSuccess2" />
+      <input @change="change" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
       <label for="radioSuccess2">Українська</label>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    currentLang: String
+  },
+  data() {
+      return {
+        picked: this.currentLang
+      }
+    },
+  methods: {
+    change() {
+      this.$emit('changeLang', this.picked)
+    }
+  }
+};
 </script>
 
 <style scoped>

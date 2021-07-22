@@ -4,7 +4,7 @@
         <input 
             type="text" 
             class="youtube-link__input form-control" 
-            placeholder="Ссылка на видео в Youtube"
+            :placeholder="text"
             @input="change"
             v-model="link"
         >

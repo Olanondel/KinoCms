@@ -4,7 +4,7 @@
     <textarea
       v-model="inputText"
       class="form-control textarea-with-text__input"
-      :placeholder="'Введите ' + text"
+      :placeholder="text"
       @input="change"
     />
   </div>

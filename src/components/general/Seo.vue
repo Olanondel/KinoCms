@@ -1,6 +1,6 @@
 <template>
     <div class="seo general__margin">
-        <label for="" class="general__text">SEO блок:</label>
+        <label for="" class="general__text">{{text}}</label>
         <form class="seo-content">
             <p class="form-url">
                 <label for="">URL</label>
@@ -57,7 +57,8 @@
                 default: () => {
                     return {url: '', title: '', keywords: '', description: ''}
                 }
-            }
+            },
+            text: String
         },
         data() {
             return {

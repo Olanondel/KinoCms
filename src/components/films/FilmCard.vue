@@ -38,6 +38,10 @@ export default {
     width: 100%;
     height: auto;
     margin-bottom: 15px;
+    max-width: 217px;
+    min-width: 217px;
+    max-height: 302px;
+    min-height: 302px;
 }
 
 .film-card__title {

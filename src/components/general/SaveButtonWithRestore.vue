@@ -1,14 +1,16 @@
 <template>
     <div class="save-restore-btns general-margin">
-        <button @click="save" class="btn btn-success btn-lg" :disabled="disabled">Сохранить</button>
-        <button @click="restore" class="btn btn-warning btn-lg">Вернуть базовую версию</button>
+        <button @click="save" class="btn btn-success btn-lg" :disabled="disabled">{{saveText}}</button>
+        <button @click="restore" class="btn btn-warning btn-lg">{{restoreText}}</button>
     </div>
 </template>
 
 <script>
     export default {
         props: {
-            disabled: Boolean
+            disabled: Boolean,
+            saveText: String,
+            restoreText: String,
         },
         methods: {
             save() {

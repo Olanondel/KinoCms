@@ -1,6 +1,6 @@
 <template>
   <div class="film-type-wrap general__margin">
-    <label for="" class="general__text">Тип кино</label>
+    <label for="" class="general__text">{{text}}</label>
     <div class="film__types">
       <div class="icheck-primary d-inline film-type">
         <input type="checkbox" id="checkboxPrimary1" v-model="data" value="3d" @change="change" />
@@ -26,7 +26,8 @@ export default {
     value: {
       type: Array,
       default: () => []
-    }
+    },
+    text: String
   },
   data() {
     return {
