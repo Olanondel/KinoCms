@@ -274,8 +274,8 @@ export default {
           this.saveToDataBase()
         }, 2000)
       } else {
-      // hello
         this.removeFilm()
+        // new comment
       }
     },
     async getPageData() {
