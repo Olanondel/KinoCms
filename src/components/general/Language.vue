@@ -15,7 +15,10 @@
 <script>
 export default {
   props: {
-    currentLang: String
+    currentLang: {
+      type: String,
+      default: 'ru'
+    }
   },
   data() {
       return {

@@ -58,7 +58,10 @@
                     return {url: '', title: '', keywords: '', description: ''}
                 }
             },
-            text: String
+            text: {
+              type: String,
+              default: 'SEO блок'
+            }
         },
         data() {
             return {

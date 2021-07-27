@@ -1,58 +1,58 @@
 <template>
-  <Preloader v-if="!init" />
+  <Preloader v-if="!init"/>
   <div class="film-edit" v-else>
-    <Language 
-      @changeLang='changeLang'
-      :currentLang="currentLang"
+    <Language
+        @changeLang='changeLang'
+        :currentLang="currentLang"
     />
 
     <div class="film-edit__content">
       <InputWithText
-        :text="lang.title"
-        :value="name"
-        @change="changeName"
+          :text="lang.title"
+          :value="name"
+          @change="changeName"
       />
       <TextAreaWithText
-        :text="lang.description"
-        :value="description"
-        @change="changeDescription"
+          :text="lang.description"
+          :value="description"
+          @change="changeDescription"
       />
       <ImageWithTwoButton
-        :text="lang.mainImage"
-        @removeImage="removeImage"
-        @changeImage="changeImage"
-        :image="mainImage"
-        :addText="lang.addText"
-        :removeText="lang.removeText"
+          :text="lang.mainImage"
+          @removeImage="removeImage"
+          @changeImage="changeImage"
+          :image="mainImage"
+          :addText="lang.addText"
+          :removeText="lang.removeText"
       />
-      <ImagesRow 
-        @change="changeImages" 
-        :data="images"
-        :text="lang.size"
-        :btnText="lang.imageRowText"
+      <ImagesRow
+          @change="changeImages"
+          :data="images"
+          :text="lang.size"
+          :btnText="lang.imageRowText"
       />
-      <YoutubeLink 
-        @change="changeTrailer" 
-        :link="trailer" 
-        :value="trailer" 
-        :text="lang.trailer"
+      <YoutubeLink
+          @change="changeTrailer"
+          :link="trailer"
+          :value="trailer"
+          :text="lang.trailer"
       />
-      <FilmType 
-        @change="changeTypes" 
-        :value="types" 
-        :text="lang.type"
+      <FilmType
+          @change="changeTypes"
+          :value="types"
+          :text="lang.type"
       />
-      <Seo 
-        @change="changeSeo" 
-        :value="seo" 
-        :text="lang.seo"
+      <Seo
+          @change="changeSeo"
+          :value="seo"
+          :text="lang.seo"
       />
       <SaveButtonWithRestore
-        @restore="clearData"
-        @save="savePageData"
-        :disabled="isRequesting"
-        :saveText="lang.save"
-        :restoreText="lang.restore"
+          @restore="clearData"
+          @save="savePageData"
+          :disabled="isRequesting"
+          :saveText="lang.save"
+          :restoreText="lang.restore"
       />
     </div>
   </div>
@@ -96,7 +96,7 @@ export default {
       imagesFiles: [],
       trailer: "",
       types: [],
-      seo: { url: "", title: "", keywords: "", description: "" },
+      seo: {url: "", title: "", keywords: "", description: ""},
       isRequesting: false,
       init: false,
       currentLang: '',
@@ -114,7 +114,7 @@ export default {
     async getLang() {
       if (!this.langData) {
         let lang = await db.collection('Language').doc('FilmEditPage').get()
-        
+
         this.langData = lang.data()
       }
 
@@ -154,7 +154,7 @@ export default {
     changeTrailer(value) {
       this.trailer = value;
     },
-    changeSeo({ url, title, keywords, description }) {
+    changeSeo({url, title, keywords, description}) {
       this.seo.url = url;
       this.seo.title = title;
       this.seo.keywords = keywords;
@@ -203,44 +203,45 @@ export default {
       }
     },
     async saveMainImage() {
-      
-        if (this.mainImageWasEdit) {
+
+      if (this.mainImageWasEdit) {
         this.isRequesting = true;
         let storageRef = firebase.storage().ref();
         let imageRef = storageRef.child("Films/mainImage.jpg");
 
         await imageRef
-          .put(this.mainImageFile)
-          .then(() => {
-            this.mainImage = ''
-            return imageRef.getDownloadURL()
-          })
-          .then(link => {
-            this.mainImage = link;
-            console.log('mainImage', this.mainImage);
-            this.mainImageWasEdit = false;
-          });
+            .put(this.mainImageFile)
+            .then(() => imageRef.getDownloadURL())
+            .then(link => {
+              this.mainImage = link;
+              this.mainImageWasEdit = false;
+            });
       }
-      return
+      console.log(2);
     },
     async saveImages() {
       let storageRef = firebase.storage().ref();
 
-      if(this.imagesFiles.length) {
-        
+      if (this.imagesFiles.length) {
+
         await this.imagesFiles.forEach(file => {
           let imageRef = storageRef.child(`Films/RowImage/image-${file.index}.jpg`);
 
           imageRef.put(file.file)
-            .then(() => imageRef.getDownloadURL())
-            .then((link) => {
-              this.images.splice(file.index, 1, link)
-            })
+              .then(() => imageRef.getDownloadURL())
+              .then((link) => {
+                this.images.splice(file.index, 1, link)
+              })
+
         })
+
       }
+
+      console.log(this.images);
+      console.log(1);
     },
     saveToDataBase() {
-      
+
       this.isRequesting = true;
 
       let id = this.$route.params.id;
@@ -251,7 +252,7 @@ export default {
       else if (id === "addToFuture") doc = db.collection("FutureFilms").doc();
       else doc = db.collection(from).doc(id);
 
-       doc.set({
+      doc.set({
         currentLang: this.currentLang,
         id: doc.id,
         name: this.name,
@@ -264,28 +265,27 @@ export default {
       });
 
       this.isRequesting = false;
-      this.$router.push({ name: "films" });
-      },
+      console.log(3);
+      this.$router.push({name: "films"});
+    },
     async savePageData() {
       if (this.name && this.description && this.mainImage) {
-        await this.saveMainImage();
         await this.saveImages()
-        setTimeout(() => {
-          this.saveToDataBase()
-        }, 2000)
+        await this.saveMainImage()
+        setTimeout(() => { this.saveToDataBase() }, 1500)
       } else {
-        this.removeFilm()
+        await this.removeFilm()
         // new comment
       }
     },
     async getPageData() {
       if (
-        this.$route.params.id !== "addToCurrent" &&
-        this.$route.params.id !== "addToFuture"
+          this.$route.params.id !== "addToCurrent" &&
+          this.$route.params.id !== "addToFuture"
       ) {
         let dataLink = db
-          .collection(this.$route.params.from)
-          .doc(this.$route.params.id);
+            .collection(this.$route.params.from)
+            .doc(this.$route.params.id);
 
         let data;
 
@@ -307,9 +307,7 @@ export default {
       this.init = true;
     }
   },
-  computed: {
-    
-  },
+  computed: {},
   created() {
     this.getPageData();
   }

@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <Header />
-        <Navigation />
+  <div>
+    <Header/>
+    <Navigation/>
 
-        <div class="content-wrapper px-4 py-2">
-            <section class="content">
-                <router-view />
-            </section>
-        </div>
-              
-        <Footer />
+    <div class="content-wrapper px-4 py-2">
+      <section class="content">
+        <router-view/>
+      </section>
     </div>
+
+    <Footer/>
+  </div>
 </template>
 
 <script>
@@ -28,6 +28,7 @@ export default {
 </script>
 
 <style>
+
 label {
   margin-bottom: 0;
 }
@@ -37,7 +38,7 @@ label {
   margin: 30px 0;
 }
 
-.content-wrapper>.content {
+.content-wrapper > .content {
   padding: 0 80px;
 }
 

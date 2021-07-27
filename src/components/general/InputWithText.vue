@@ -1,12 +1,12 @@
 <template>
   <div class="input-with-text general__margin">
-    <label class="input-with-text__text general__text">{{text}}</label>
+    <label class="input-with-text__text general__text">{{ text }}</label>
     <input
-      @input="change"
-      type="text"
-      class="form-control input-with-text__input"
-      :placeholder="text"
-      v-model="inputText"
+        @input="change"
+        type="text"
+        class="form-control input-with-text__input"
+        :placeholder="text"
+        v-model="inputText"
     />
   </div>
 </template>
@@ -16,7 +16,10 @@
 export default {
   name: 'InputWithText',
   props: {
-    text: String,
+    text: {
+      type: String,
+      default: ''
+    },
     value: {
       type: String,
       default: ''

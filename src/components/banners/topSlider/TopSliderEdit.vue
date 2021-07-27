@@ -23,8 +23,8 @@
         </div>
 
         <div class="top-slider__add-button">
-          <a @click="addSlide" class="btn btn-app bg-info">
-            <i class="fas fa-heart"></i> Добавить фото
+          <a @click="addSlide" class="btn btn-app">
+            <i class="fas fa-play"></i> Добавить фото
           </a>
         </div>
       </div>
