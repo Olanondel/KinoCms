@@ -1,12 +1,13 @@
 <template>
   <div class="lang-tabs">
+    <slot />
     <div class="icheck-success d-inline">
       <input @change="change" type="radio" name="r3" id="radioSuccess1" value="ru" v-model="picked" />
       <label for="radioSuccess1">Русский</label>
     </div>
 
     <div class="icheck-success d-inline">
-      <input @change="change" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
+      <input @change="change(value)" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
       <label for="radioSuccess2">Українська</label>
     </div>
   </div>
@@ -39,5 +40,6 @@ export default {
   justify-content: flex-end;
   gap: 30px;
   margin: 0 30% 30px 0;
+  align-items: center;
 }
 </style>

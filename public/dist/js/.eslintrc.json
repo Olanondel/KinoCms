@@ -7,6 +7,9 @@
   "env": {
     "jquery": true
   },
+  "globals": {
+    "$": true
+  },
   "extends": [
     "plugin:unicorn/recommended",
     "xo",

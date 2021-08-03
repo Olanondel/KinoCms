@@ -19,6 +19,11 @@
 
           <HallListTableRow
               :id="id"
+              v-for="(hall, index) in halls"
+              :key="index"
+              :hall="hall"
+              :index="index"
+              @remove="remove"
           />
 
           </tbody>
@@ -34,7 +39,7 @@
       </div>
     </div>
     <div class="add-hall-wrap">
-      <router-link :to="{name: 'hallEdit', params: { id: id }}" class="btn btn-primary add-hall"><i
+      <router-link :to="{name: 'hallEdit', params: { id }}" class="btn btn-primary add-hall"><i
           class="fa fa-plus"></i>Создать Зал
       </router-link>
     </div>
@@ -50,11 +55,19 @@ export default {
     id: {
       type: String,
       default: 'addCinema'
+    },
+    halls: {
+      type: Array,
     }
   },
   components: {HallListTableRow},
   data() {
     return {}
+  },
+  methods: {
+    remove(index) {
+      this.$emit('removeHall', index)
+    }
   }
 }
 </script>

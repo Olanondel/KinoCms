@@ -2,11 +2,11 @@
   <div class="input-with-text general__margin">
     <label class="input-with-text__text general__text">{{ text }}</label>
     <input
-        @input="change"
         type="text"
         class="form-control input-with-text__input"
         :placeholder="text"
-        v-model="inputText"
+        :value="value"
+        @input="$emit('input', $event.target.value)"
     />
   </div>
 </template>
@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      inputText: this.value
+      // inputText: this.value
     }
   },
   methods: {

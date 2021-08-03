@@ -2,10 +2,10 @@
   <div class="textarea-with-text general__margin">
     <label class="textarea-with-text__text general__text">{{text}}</label>
     <textarea
-      v-model="inputText"
       class="form-control textarea-with-text__input"
       :placeholder="text"
-      @input="change"
+      :value="value"
+      @input="$emit('input', $event.target.value)"
     />
   </div>
 </template>
@@ -13,20 +13,13 @@
 <script>
     export default {
         props: {
-          text: String,
+          text: {
+            type: String,
+            default: 'Описание'
+          },
           value: {
             type: String,
             default: ''
-          }
-        },
-        data() {
-          return {
-            inputText: this.value
-          }
-        },
-        methods: {
-          change() {
-            this.$emit('change', this.inputText)
           }
         }
     }

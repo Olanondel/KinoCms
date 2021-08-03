@@ -1,6 +1,6 @@
 <template>
   <div class="cinema">
-    <router-link class="cinema__link" :to="{name: 'cinemaEdit', params: { id: id }}">
+    <router-link class="cinema__link" :to="'/cinemaConfig/' + id">
       <div class="image-wrap">
         <CloseElementButton @remove="removeCinema(index, id)" />
         <img class="cinema-image" :src="logotype" alt="cinema">
@@ -17,7 +17,10 @@ export default {
   props: {
     index: Number,
     id: String,
-    logotype: String,
+    logotype: {
+      type: String,
+      default: require('../../assets/image/empty.jpg')
+    },
     title: String
   },
   components: {CloseElementButton},
@@ -52,5 +55,9 @@ export default {
   margin-bottom: 15px;
   height: 180px;
   min-height: 180px;
+}
+
+.cinema__text {
+  text-align: center;
 }
 </style>

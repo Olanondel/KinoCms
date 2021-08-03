@@ -8,8 +8,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="URL"
-                    @input="change"
-                    v-model="data.url"
+                    :value="value.url"
+                    @input="$emit('input', $event.target.value)"
                 >
             </p>
 
@@ -19,8 +19,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Title"
-                    @input="change"
-                    v-model="data.title"
+                    :value="value.title"
+                    @input="$emit('input', $event.target.value)"
                 >
             </p>
 
@@ -30,8 +30,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Keywords"
-                    @input="change"
-                    v-model="data.keywords"
+                    :value="value.keywords"
+                    @input="$emit('input', $event.target.value)"
                 >
             </p>
 
@@ -39,9 +39,9 @@
                 <label for="">Description</label>
                 <textarea 
                     class="form-control" 
-                    placeholder="Description" 
-                    @input="change"
-                    v-model="data.description"
+                    placeholder="Description"
+                    :value="value.description"
+                    @input="$emit('input', $event.target.value)"
                 />
             </p>    
         </form>

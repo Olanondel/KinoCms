@@ -13,7 +13,16 @@
   </div>
 </template>
 
+
 <script>
+import '../public/dist/css/adminlte.min.css'
+import '../public/plugins/overlayScrollbars/css/OverlayScrollbars.min.css'
+import '../public/plugins/fontawesome-free/css/all.min.css'
+import '../public/plugins/icheck-bootstrap/icheck-bootstrap.min.css'
+import '../public/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css'
+import 'vue2-datepicker/index.css';
+
+
 import Footer from '@/layout/Footer.vue';
 import Header from '@/layout/Header.vue';
 import Navigation from '@/layout/Navigation.vue';

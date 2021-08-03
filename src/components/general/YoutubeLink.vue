@@ -5,8 +5,8 @@
             type="text" 
             class="youtube-link__input form-control" 
             :placeholder="text"
-            @input="change"
-            v-model="link"
+            :value="value"
+            @input="$emit('input', $event.target.value)"
         >
     </div>
 </template>
@@ -22,16 +22,6 @@
             value: {
                 type: String,
                 default: ''
-            }
-        },
-        data() {
-            return {
-                link: this.value
-            }
-        },
-        methods: {
-            change() {
-                this.$emit('change', this.link)
             }
         },
     }

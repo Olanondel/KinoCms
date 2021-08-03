@@ -1,56 +1,40 @@
 <template>
   <div class="hall-edit-page">
 
-    <Language
-        @changeLang='changeLang'
-        :currentLang="currentLang"
-    />
+    <Language @changeLang='changeLang' :currentLang="hallsCurrentLang" />
 
-    <InputWithText
-        :text="lang.hallNumber"
-        :value="hallNumber"
-        @change="changeHallNumber"
-    />
+    <InputWithText :text="hallLang.hallNumber" v-model="hallNumber" />
 
-    <TextAreaWithText
-        :text="lang.description"
-        :value="description"
-        @change="changeDescription"
-    />
+    <TextAreaWithText :text="hallLang.description" v-model="description" />
 
     <ImageWithTwoButton
-        :text="lang.hallScheme"
+        :text="hallLang.scheme"
+        :image="hallSchemeImage"
+        :addText="hallLang.addText"
+        :removeText="hallLang.removeText"
         @removeImage="removeHallSchemeImage"
         @changeImage="changeHallSchemeImage"
-        :image="hallSchemeImage"
-        :addText="lang.addText"
-        :removeText="lang.removeText"
     />
 
     <ImageWithTwoButton
-        :text="lang.topBanner"
+        :text="hallLang.topBanner"
+        :image="topBannerImage"
+        :addText="hallLang.addText"
+        :removeText="hallLang.removeText"
         @removeImage="removeTopBannerImage"
         @changeImage="changeTopBannerImage"
-        :image="topBannerImage"
-        :addText="lang.addText"
-        :removeText="lang.removeText"
     />
 
     <ImageRow
-        @change="changeRowImage"
         :data="images"
-        :text="lang.imageRowSizeText"
-        :btnText="lang.imageRowButtonText"
+        :text="hallLang.imageRowSizeText"
+        :btnText="hallLang.imageRowButtonText"
+        @change="changeRowImage"
     />
 
-    <Seo
-        @change="changeSeo"
-        :value="seo"
-    />
+    <Seo v-model="seo" />
 
-    <SaveButton
-        :text="lang.saveButtonText"
-    />
+    <SaveButton :text="hallLang.saveButtonText" @saveEvent="saveHall" />
 
   </div>
 </template>
@@ -63,58 +47,40 @@ import ImageWithTwoButton from "../../../components/general/ImageWithTwoButton";
 import ImageRow from "../../../components/general/imagesRow/ImagesRow";
 import Seo from "../../../components/general/Seo";
 import SaveButton from "../../../components/general/SaveButton";
-import db from '../../../firebase/firebaseInit'
 
 export default {
   name: "HallEditPage",
   components: {SaveButton, Seo, ImageRow, ImageWithTwoButton, TextAreaWithText, InputWithText, Language},
+  props: {
+    halls: {
+      type: Array
+    },
+    hallLang: Object,
+    hallsCurrentLang: String
+  },
   data() {
     return {
       hallNumber: '',
       description: '',
-      hallScheme: '',
       hallSchemeImage: '',
-      schemeImageFile: null,
+      hallSchemeImageFile: null,
       topBannerImage: '',
       topBannerImageFile: null,
       images: ['', '', '', '', ''],
       imagesFiles: [],
-      currentLang: '',
       isFetching: false,
-      seo: {
-        url: '',
-        title: '',
-        keywords: '',
-        description: ''
-      },
-      isInit: false,
-
-      lang: {}
+      seo: {url: '', title: '', keywords: '', description: '',},
+      date: '',
+      currentLang: ''
     }
   },
   methods: {
-    getLang() {
-      if (!this.currentLang) {
-        this.currentLang = navigator.language || navigator.userLanguage
-      }
-
-      let ref = db.collection('Language').doc('Cinema')
-          .collection('hallEdit').doc(this.currentLang)
-
-      ref.get()
-          .then(doc => {
-            this.lang = doc.data()
-          })
-    },
     changeLang(lang) {
       this.currentLang = lang
-      this.getLang()
+      this.$emit('changeHallLang', lang)
     },
-    changeHallNumber(value) {
-      this.hallNumber = value
-    },
-    changeDescription(value) {
-      this.description = value
+    getLang() {
+      this.$emit('getLang')
     },
     removeHallSchemeImage() {
       this.hallSchemeImage = ''
@@ -148,37 +114,54 @@ export default {
 
       reader.readAsDataURL(file)
     },
-    changeSeo({url, title, keywords, description}) {
-      this.seo.url = url
-      this.seo.title = title
-      this.seo.keywords = keywords
-      this.seo.description = description
-    },
-    saveToDatabase() {
-      let ref = db.collection('Cinemas/data')
-          .collection('halls')
+    saveHall() {
+        if (this.hallNumber) {
+          this.$emit('saveHall', this.$route.params.index, {
+            hallNumber: this.hallNumber,
+            description: this.description,
+            hallSchemeImage: this.hallSchemeImage,
+            hallSchemeImageFile: this.hallSchemeImageFile,
+            topBannerImage: this.topBannerImage,
+            topBannerImageFile: this.topBannerImageFile,
+            images: this.images,
+            imagesFiles: this.imagesFiles,
+            currentLang: this.currentLang,
+            seo: this.seo,
+            date: this.getDate()
+          })
 
-      ref.set({
-        currentLang: 'ru',
-        hallNumber: '',
-        description: '',
-        hallSchemeImage: '',
-        hallSchemeImageFile: '',
-        topBannerImage: '',
-        topBannerImageFile: '',
-        rowImages: ['', '', '', '', ''],
-        rowImagesFiles: [],
-        seo: {
-          url: '',
-          title: '',
-          keywords: '',
-          description: '',
-        },
-      })
+          this.$router.go(-1)
+        }
+    },
+    getDate() {
+      let today = new Date();
+      let dd = String(today.getDate()).padStart(2, '0');
+      let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      let yyyy = today.getFullYear();
+
+      return today = dd + '-' + mm + '-' + yyyy;
+    },
+    createHall() {
+      this.$emit('createHall')
+    },
+    getHallData() {
+      let hallIndex = this.$route.params.index
+
+      if(hallIndex || hallIndex === 0) {
+        let data = this.halls[hallIndex]
+
+        for (let [key, value] of Object.entries(data)) {
+          this[key] = value
+        }
+      }
     }
   },
   created() {
+    this.getHallData()
     this.getLang()
+  },
+  mounted() {
+
   }
 }
 </script>

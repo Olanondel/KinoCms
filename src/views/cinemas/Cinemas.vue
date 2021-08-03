@@ -1,11 +1,11 @@
 <template>
-    <Preloader v-if="!isInit" />
+  <Preloader v-if="!isInit"/>
   <div v-else class="cinemas">
     <h2 class="title">Список Кинотеатров</h2>
     <div class="cinemas-list">
 
       <Cinema
-          v-for="(cinema, index) in reverseCinemas"
+          v-for="(cinema, index) in cinemas"
           :key="cinema.id"
           @removeCinema="removeCinema"
           :index="index"
@@ -15,7 +15,7 @@
       />
 
       <div class="cinema">
-        <router-link :to="{name: 'cinemaEdit', params: { id: 'addCinema' }}">
+        <router-link to="/cinemaConfig/addCinema">
           <div class="add">
             <a class="f">
               <i class="icon fa fa-plus"></i>
@@ -33,8 +33,9 @@
 import Cinema from "../../components/cinemas/Cinema";
 import db from '@/firebase/firebaseInit.js';
 import Preloader from "../../components/general/Preloader";
+
 export default {
-  components:  {Preloader, Cinema},
+  components: {Preloader, Cinema},
   name: "cinemas",
   data() {
     return {
@@ -43,10 +44,6 @@ export default {
     }
   },
   computed: {
-    reverseCinemas() {
-      let arr = this.cinemas
-      return arr.reverse()
-    }
   },
   methods: {
     removeCinema(index, id) {
@@ -62,57 +59,57 @@ export default {
           .collection('editPage')
 
       ref.get()
-        .then(doc => {
-          let data = doc.docs.map(el => {
-            return {...el.data(), id: el.id}
-          })
+          .then(doc => {
+            let data = doc.docs.map(el => {
+              return {...el.data(), id: el.id}
+            })
 
-          this.cinemas = data
-          this.isInit = true
-        })
+            this.cinemas = data
+            this.isInit = true
+          })
 
     }
   },
-  created() {
+  mounted() {
     this.getData()
   }
 }
 </script>
 
 <style scoped>
-  .cinemas {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+.cinemas {
+  max-width: 1100px;
+  margin: 0 auto;
+}
 
-  .cinemas-list {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
-  }
+.cinemas-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
 
-  .cinema {
-    width: 25%;
-    margin-bottom: 30px;
-  }
+.cinema {
+  width: 25%;
+  margin-bottom: 30px;
+}
 
-  .cinema__text {
-    text-align: center;
-    height: 10%;
-  }
+.cinema__text {
+  text-align: center;
+  height: 10%;
+}
 
-  .add {
-    width: 100%;
-    height: 180px;
-    min-height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-    cursor: pointer;
-  }
+.add {
+  width: 100%;
+  height: 180px;
+  min-height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
 
-  .icon {
-    font-size: 150px;
-  }
+.icon {
+  font-size: 150px;
+}
 </style>

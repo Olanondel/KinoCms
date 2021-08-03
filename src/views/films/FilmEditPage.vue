@@ -1,22 +1,12 @@
 <template>
   <Preloader v-if="!init"/>
   <div class="film-edit" v-else>
-    <Language
-        @changeLang='changeLang'
-        :currentLang="currentLang"
-    />
+    <Language @changeLang='changeLang' :currentLang="currentLang" />
 
     <div class="film-edit__content">
-      <InputWithText
-          :text="lang.title"
-          :value="name"
-          @change="changeName"
-      />
-      <TextAreaWithText
-          :text="lang.description"
-          :value="description"
-          @change="changeDescription"
-      />
+      <InputWithText :text="lang.title" v-model="name" />
+      <TextAreaWithText :text="lang.description" v-model="description" />
+
       <ImageWithTwoButton
           :text="lang.mainImage"
           @removeImage="removeImage"
@@ -31,22 +21,13 @@
           :text="lang.size"
           :btnText="lang.imageRowText"
       />
-      <YoutubeLink
-          @change="changeTrailer"
-          :link="trailer"
-          :value="trailer"
-          :text="lang.trailer"
-      />
+      <YoutubeLink :link="trailer" v-model="trailer" :text="lang.trailer" />
       <FilmType
           @change="changeTypes"
           :value="types"
           :text="lang.type"
       />
-      <Seo
-          @change="changeSeo"
-          :value="seo"
-          :text="lang.seo"
-      />
+      <Seo v-model="seo" :text="lang.seo" />
       <SaveButtonWithRestore
           @restore="clearData"
           @save="savePageData"
@@ -144,21 +125,6 @@ export default {
       };
 
       reader.readAsDataURL(file);
-    },
-    changeName(value) {
-      this.name = value;
-    },
-    changeDescription(value) {
-      this.description = value;
-    },
-    changeTrailer(value) {
-      this.trailer = value;
-    },
-    changeSeo({url, title, keywords, description}) {
-      this.seo.url = url;
-      this.seo.title = title;
-      this.seo.keywords = keywords;
-      this.seo.description = description;
     },
     changeTypes(data) {
       this.types = data;
