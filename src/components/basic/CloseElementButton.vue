@@ -1,9 +1,6 @@
 <template>
-  <a @click.prevent="remove" class="slide-edit__close">
-    <i class="far fa-times-circle">
-
-    </i
-  ></a>
+    <i v-if="!isFetching" @click.prevent="remove" class="far fa-times-circle slide-edit__close"></i>
+    <i v-else class="fas fa-ban slide-edit__close"></i>
 </template>
 
 <script>
@@ -11,7 +8,11 @@
 export default {
   name: "CloseElementButton.vue",
   props: {
-    index: Number
+    index: Number,
+    isFetching: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     remove() {

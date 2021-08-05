@@ -51,9 +51,6 @@ import lodash from 'lodash'
 <style scoped>
 
 .input-with-two-button__image {
-    max-width: 18%;
-    min-width: 18%;
-    width: 18%;
     margin-right: 35px;
     min-height: 194px;
     height: 194px;

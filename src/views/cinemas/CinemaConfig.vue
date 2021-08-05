@@ -57,7 +57,7 @@ export default {
 
         currentLang: '',
         isInit: false,
-        isFetching: false
+        isFetching: false,
       },
 
       hallsNeedRemove: [],
@@ -250,7 +250,8 @@ export default {
         seo: this.cinema.seo,
         currentLang: this.cinema.currentLang,
         isInit: true,
-        id: this.cinema.id
+        id: this.cinema.id,
+        isFetching: false
       })
     },
     async saveCinema() {
@@ -366,7 +367,8 @@ export default {
         seo: hall.seo,
         isInit: true,
         id: hallId,
-        date: hall.date
+        date: hall.date,
+        isFetching: false
       })
     },
     async saveHalls() {

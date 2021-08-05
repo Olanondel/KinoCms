@@ -1,6 +1,11 @@
 <template>
-  <div class="float-r">
-    <button type="button" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> {{text}}</button>
+  <div class="float-r general__margin">
+    <router-link
+        :to="{name: 'newsEdit', params: { id: 'addNews' }}"
+        type="button"
+        class="btn btn-primary"><i
+        class="fa fa-plus"
+        aria-hidden="true"></i> {{text}}</router-link>
   </div>
 </template>
 

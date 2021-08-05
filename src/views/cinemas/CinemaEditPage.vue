@@ -41,7 +41,11 @@
         @removeHall="removeHall"
     />
 
-    <Seo :text="cinemaLang.seo" v-model="cinema.seo" />
+    <Seo
+        :text="cinemaLang.seo"
+        :value="cinema.seo"
+        @change="changeSeo"
+    />
 
     <SaveButton
         :text="cinemaLang.saveButtonText"

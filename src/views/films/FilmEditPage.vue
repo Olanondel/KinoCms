@@ -27,7 +27,12 @@
           :value="types"
           :text="lang.type"
       />
-      <Seo v-model="seo" :text="lang.seo" />
+      <Seo
+          v-model="seo"
+          :text="lang.seo"
+          @change="changeSeo"
+      />
+
       <SaveButtonWithRestore
           @restore="clearData"
           @save="savePageData"
@@ -91,6 +96,9 @@ export default {
       this.currentLang = value
 
       this.getLang()
+    },
+    changeSeo(data) {
+      this.seo = data
     },
     async getLang() {
       if (!this.langData) {

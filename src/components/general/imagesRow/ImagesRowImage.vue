@@ -42,8 +42,6 @@ import lodash from 'lodash'
 
 <style scoped>
 .images-row__image-wrapper {
-    width: 20%;
-    min-width: 20%;
     padding: 15px;
 }
 

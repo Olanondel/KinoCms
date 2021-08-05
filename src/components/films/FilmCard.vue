@@ -41,6 +41,7 @@ export default {
     max-width: 217px;
     min-width: 217px;
     max-height: 302px;
+  object-fit: cover;
     min-height: 302px;
 }
 

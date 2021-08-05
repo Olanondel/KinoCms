@@ -8,8 +8,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="URL"
-                    :value="value.url"
-                    @input="$emit('input', $event.target.value)"
+                    v-model="seo.url"
+                    @input="change"
                 >
             </p>
 
@@ -19,8 +19,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Title"
-                    :value="value.title"
-                    @input="$emit('input', $event.target.value)"
+                    v-model="seo.title"
+                    @input="change"
                 >
             </p>
 
@@ -30,8 +30,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Keywords"
-                    :value="value.keywords"
-                    @input="$emit('input', $event.target.value)"
+                    v-model="seo.keywords"
+                    @input="change"
                 >
             </p>
 
@@ -40,8 +40,8 @@
                 <textarea 
                     class="form-control" 
                     placeholder="Description"
-                    :value="value.description"
-                    @input="$emit('input', $event.target.value)"
+                    v-model="seo.description"
+                    @input="change"
                 />
             </p>    
         </form>
@@ -52,30 +52,25 @@
     export default {
         name: 'Seo',
         props: {
-            value: {
-                type: Object,
-                default: () => {
-                    return {url: '', title: '', keywords: '', description: ''}
-                }
-            },
+            value: Object,
             text: {
               type: String,
               default: 'SEO блок'
             }
         },
-        data() {
-            return {
-                data: {
-                    url: this.value.url,
-                    title: this.value.title,
-                    keywords: this.value.keywords,
-                    description: this.value.description
-                }
-            }
-        },
+      data() {
+        return {
+          seo: {
+            url: this.value.url,
+            title: this.value.title,
+            keywords: this.value.keywords,
+            description: this.value.description,
+          }
+        }
+      },
         methods: {
             change() {
-                this.$emit('change', this.data)
+                this.$emit('change', this.seo)
             }
         },
     }

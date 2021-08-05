@@ -2,7 +2,7 @@
   <div class="cinema">
     <router-link class="cinema__link" :to="'/cinemaConfig/' + id">
       <div class="image-wrap">
-        <CloseElementButton @remove="removeCinema(index, id)" />
+        <CloseElementButton :isFetching="isFetching" @remove="removeCinema(index, id)" />
         <img class="cinema-image" :src="logotype" alt="cinema">
       </div>
       <div class="cinema__text">{{title}}</div>
@@ -17,6 +17,7 @@ export default {
   props: {
     index: Number,
     id: String,
+    isFetching: Boolean,
     logotype: {
       type: String,
       default: require('../../assets/image/empty.jpg')

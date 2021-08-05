@@ -1,12 +1,14 @@
 <template>
   <div class="switcher">
-    <span class="switcher-text">{{stateText}}</span>
+    <span class="switcher-text">{{ stateText }}</span>
+
     <input
         type="checkbox"
-        checked data-toggle="toggle"
-        data-onstyle="outline-success"
-        data-offstyle="outline-danger"
-        :isCheck="checked"
+        name="my-checkbox"
+        data-on-color="success"
+        data-off-color="danger"
+        checked
+        :isChecked="isCheck"
         @change="$emit('change', $event.target.checked)"
     >
   </div>
@@ -16,14 +18,38 @@
 export default {
   name: "SwitcherWithText",
   model: {
-    prop: 'isCheck',
+    prop: 'isChecked',
     event: 'change'
   },
   props: {
-    checked: Boolean,
+    isCheck: Boolean,
     stateText: String
   },
-  computed: {
+  data() {
+    return {
+    }
+  },
+  methods: {
+    changeState(e) {
+      console.log('be changed')
+
+      this.$emit('changeState', e.target.checked)
+    },
+    switcherInit() {
+      /* eslint-env jquery */
+
+      $("[name='my-checkbox']").bootstrapSwitch('state', $(this).prop('checked'));
+
+      $('input[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function () {
+        $(this)[0].dispatchEvent(new Event("change"))
+      })
+    },
+  },
+  watch: {
+
+  },
+  mounted() {
+    this.switcherInit()
   }
 }
 </script>

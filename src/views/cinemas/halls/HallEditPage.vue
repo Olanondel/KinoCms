@@ -32,7 +32,10 @@
         @change="changeRowImage"
     />
 
-    <Seo v-model="seo" />
+    <Seo
+      @change="changeSeo"
+      :value="seo"
+    />
 
     <SaveButton :text="hallLang.saveButtonText" @saveEvent="saveHall" />
 
@@ -78,6 +81,9 @@ export default {
     changeLang(lang) {
       this.currentLang = lang
       this.$emit('changeHallLang', lang)
+    },
+    changeSeo(data) {
+      this.seo = data
     },
     getLang() {
       this.$emit('getLang')

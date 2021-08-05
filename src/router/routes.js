@@ -18,7 +18,7 @@ export const routes = [
     {path: "/banners", name: "banners", component: Banners},
     {path: "/films", name: "films", component: Films,},
     {path: "/news", name: "news", component: News},
-    {path: "/newsEdit", name: "newsEdit", component: NewsEditPage},
+    {path: "/newsEdit/:id", name: "newsEdit", component: NewsEditPage},
     {path: "/promotions", name: "promotions", component: Promotions},
     {path: "/pages", name: "pages", component: Pages},
     {path: "/users", name: "users", component: Users},

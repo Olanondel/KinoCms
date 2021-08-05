@@ -12,6 +12,7 @@
           :id="cinema.id"
           :logotype="cinema.logotypeImage"
           :title="cinema.title"
+          :isFetching="cinema.isFetching"
       />
 
       <div class="cinema">
@@ -40,16 +41,17 @@ export default {
   data() {
     return {
       cinemas: [],
-      isInit: false
+      isInit: false,
     }
   },
   computed: {
   },
   methods: {
-    removeCinema(index, id) {
+    async removeCinema(index, id) {
+      this.cinemas[index].isFetching = true
       let ref = db.collection('Cinemas').doc('data').collection('editPage').doc(id)
 
-      ref.delete().then(() => {
+      await ref.delete().then(() => {
         this.cinemas.splice(index, 1)
       })
     },

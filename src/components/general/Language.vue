@@ -7,7 +7,7 @@
     </div>
 
     <div class="icheck-success d-inline">
-      <input @change="change(value)" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
+      <input @change="change" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
       <label for="radioSuccess2">Українська</label>
     </div>
   </div>

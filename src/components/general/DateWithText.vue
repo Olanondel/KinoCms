@@ -7,6 +7,9 @@
             type="text"
             class="form-control datetimepicker-input date-input"
             data-target="#reservationdate"
+            id="datepicker-input"
+            :value="value"
+            @input="$emit('input', $event.target.value)"
         >
         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -22,8 +25,9 @@ export default {
   props: {
     text: {
       type: String,
-      default: 'Дата Публикации'
-    }
+      default: 'Дата Публикации',
+    },
+    value: String
   },
   data() {
     return {
@@ -31,9 +35,27 @@ export default {
     }
   },
   methods: {
-    changeDate() {
-
+    changeDate(e) {
+      console.log(e.target.value)
+      this.$emit('changeDate', e.target.value)
     },
+    dateInit() {
+      /* eslint-env jquery */
+      $(function() {
+        $('#reservationdate').datetimepicker({
+          format: 'DD-MM-YYYY',
+        })
+      })
+
+      $(function() {
+        $('#reservationdate').on('change.datetimepicker', function () {
+          $('#datepicker-input')[0].dispatchEvent(new Event('input'))
+        })
+      })
+    }
+  },
+  mounted() {
+    this.dateInit()
   }
 }
 </script>

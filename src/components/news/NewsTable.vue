@@ -1,6 +1,9 @@
 <template>
-  <div class="card-body">
-    <table class="table table-bordered">
+  <div class="card-body" >
+    <div v-show="!data.length">
+      <h3>Список новостей пуст. Начните создавать свою первую новость!</h3>
+    </div>
+    <table class="table table-bordered" v-show="data.length">
       <thead>
       <tr>
         <th>Название</th>
@@ -12,15 +15,15 @@
       <tbody>
 
       <NewsTableRow
-        title="Три билета в подарок"
-        date="01.08.2021"
-        status="ВКЛ"
-      />
-
-      <NewsTableRow
-          title="Три билета в подарок"
-          date="01.08.2021"
-          status="ВЫКЛ"
+        v-for="(news, index) in data"
+        :key="news.id"
+        :title="news.title"
+        :date="news.date"
+        :status="news.stateText"
+        :id="news.id"
+        :index="index"
+        :isFetching="isFetching"
+        @remove="remove"
       />
 
       </tbody>
@@ -32,7 +35,16 @@
 import NewsTableRow from "./NewsTableRow";
 export default {
   name: "Table",
-  components: {NewsTableRow}
+  components: {NewsTableRow},
+  props: {
+    data: Array,
+    isFetching: Boolean
+  },
+  methods: {
+    remove(id, index) {
+      this.$emit('remove', id, index)
+    }
+  }
 }
 </script>
 
