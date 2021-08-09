@@ -17,6 +17,10 @@
         @removeTopBannerImage="removeTopBannerImage"
         @saveCinema="saveCinema"
         @removeHall="removeHall"
+        @url="editSeoUrl"
+        @title="editSeoTitle"
+        @keywords="editSeoKeywords"
+        @description="editSeoDescription"
 
         :hallLang="hallLang"
         :halls="halls"
@@ -73,6 +77,18 @@ export default {
     changeCinemaLang(lang) {
       this.cinema.currentLang = lang
       this.getCinemaLang()
+    },
+    editSeoUrl(url) {
+      this.cinema.seo.url = url
+    },
+    editSeoTitle(title) {
+      this.cinema.seo.title = title
+    },
+    editSeoKeywords(keywords) {
+      this.cinema.seo.keywords = keywords
+    },
+    editSeoDescription(description) {
+      this.cinema.seo.description = description
     },
     changeLogotypeImage(file) {
       this.cinema.logotypeImageFile = file
@@ -262,7 +278,7 @@ export default {
       await this.saveToDatabase()
 
       this.cinema.isFetching = false
-      this.$router.push({name: 'cinemas'})
+      await this.$router.push({name: 'cinemas'})
     },
     getHallLang() {
       if (!this.hallsCurrentLang) {
@@ -277,7 +293,7 @@ export default {
             this.hallLang = doc.data()
           })
     },
-    uploadHallImages(hall, index) {
+    async uploadHallImages(hall, index) {
       let globIndex = index
       let storageRef = firebase.storage().ref()
 
@@ -296,7 +312,7 @@ export default {
 
       }
     },
-    uploadSchemeHallImage(hall, index) {
+    async uploadSchemeHallImage(hall, index) {
       if (hall.hallSchemeImageFile) {
         let storageRef = firebase.storage().ref()
         let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/schemeImage.jpg`);
@@ -309,7 +325,7 @@ export default {
         this.halls[index].hallSchemeImageFile = null
       }
     },
-    uploadTopBannerHallImage(hall, index) {
+    async uploadTopBannerHallImage(hall, index) {
       if (hall.topBannerImageFile) {
         let storageRef = firebase.storage().ref()
         let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/topBanner.jpg`);
@@ -322,24 +338,30 @@ export default {
         this.halls[index].topBannerImageFile = null
       }
     },
-    facadeUploadHallFiles(hall, index) {
-      this.uploadSchemeHallImage(hall, index)
-      this.uploadTopBannerHallImage(hall, index)
-      this.uploadHallImages(hall, index)
+    async facadeUploadHallFiles(hall, index) {
+      Promise.all([
+        await this.uploadSchemeHallImage(hall, index),
+        await this.uploadTopBannerHallImage(hall, index),
+        await this.uploadHallImages(hall, index)
+      ])
     },
     async deleteHallFiles(id) {
       let storage = firebase.storage();
 
-      let ref = storage.ref('Cinemas/Halls/' + id)
+      let schemeImage = storage.ref('Cinemas/Halls/' + id + '/schemeImage.jpg')
+      let topBannerImage = storage.ref('Cinemas/Halls/' + id + '/topBanner.jpg')
 
-      await ref.delete()
+      await schemeImage.delete()
+      await topBannerImage.delete()
     },
     async deleteHalls() {
-      for await (let id of this.hallsNeedRemove) {
-        let ref = db.collection('Cinemas').doc('data').collection('halls').doc(this.cinema.id).collection('halls').doc(id)
+      if (this.hallsNeedRemove && this.hallsNeedRemove.length) {
+        for await (let id of this.hallsNeedRemove) {
+          let ref = db.collection('Cinemas').doc('data').collection('halls').doc(this.cinema.id).collection('halls').doc(id)
 
-        await this.deleteHallFiles()
-        ref.delete()
+          await this.deleteHallFiles(id)
+          ref.delete()
+        }
       }
 
       this.hallsNeedRemove = []
@@ -379,10 +401,11 @@ export default {
         await this.saveHallsToDatabase(value)
       }
     },
-    facadeUploadImages() {
-      this.uploadImages()
-      this.uploadLogotypeImage()
-      this.uploadTopBannerImage()
+    async facadeUploadImages() {
+      await Promise.all([
+          await this.uploadImages(),
+        await this.uploadLogotypeImage(),
+        await this.uploadTopBannerImage()])
     },
     getId() {
       if (this.cinema.id) {

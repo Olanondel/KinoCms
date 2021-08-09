@@ -78,8 +78,8 @@ export default {
       slideImageFiles: [],
       sliderSpeed: 2,
       showTopSliderConfig: null,
-      isFetching: null,
-      isInit: false
+      isFetching: false,
+      isInit: false,
     };
   },
   methods: {
@@ -106,29 +106,30 @@ export default {
           `Banners&Sliders/TopSlider/${"slide" + slide}`
         );
 
-        await ref
-          .put(this.slideImageFiles[slide])
-          .then(() => ref.getDownloadURL())
-          .then(e => this.slides[slide].image = e)
+        await ref.put(this.slideImageFiles[slide])
+        let link = await ref.getDownloadURL()
+        this.slides[slide].image = link
     },
 
     async saveSliderSettings() {
       this.isFetching = true
 
-      this.slides.forEach((slide, index) => {
+      await Promise.all(this.slides.map(async (slide, index) => {
         if (slide.imageChanged) {
-          this.setImageRef(index);
+          await this.setImageRef(index);
           this.slides[index].imageChanged = false;
         }
-      });
+      }))
 
-      const topSliderConfig = await db
-        .collection("topSliderConfig")
-        .doc("topSliderConfig");
+      this.slides.imagesFiles = []
+
+      const topSliderConfig = db.collection("topSliderConfig").doc("topSliderConfig");
+
       await topSliderConfig.set({
         slidesConfig: this.slides,
         speed: this.sliderSpeed,
       });
+
       this.isFetching = false
     },
 

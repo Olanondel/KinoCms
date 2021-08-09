@@ -31,22 +31,21 @@ export default {
   },
   methods: {
     changeState(e) {
-      console.log('be changed')
 
       this.$emit('changeState', e.target.checked)
     },
     switcherInit() {
       /* eslint-env jquery */
 
-      $("[name='my-checkbox']").bootstrapSwitch('state', $(this).prop('checked'));
+      let switcherState = $("[name='my-checkbox']")
 
-      $('input[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function () {
+      switcherState.bootstrapSwitch('state', this.isCheck);
+      console.log(this.isCheck)
+
+      switcherState.on('switchChange.bootstrapSwitch', function () {
         $(this)[0].dispatchEvent(new Event("change"))
       })
     },
-  },
-  watch: {
-
   },
   mounted() {
     this.switcherInit()

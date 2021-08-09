@@ -58,6 +58,7 @@ export default {
       id: data.id,
       seo: data.seo,
       init: true,
+      isFetching: false,
     })
   },
   async save(data) {

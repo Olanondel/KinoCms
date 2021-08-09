@@ -33,7 +33,10 @@
     />
 
     <Seo
-      @change="changeSeo"
+      @url="editSeoUrl"
+      @title="editSeoTitle"
+      @keywords="editSeoKeywords"
+      @description="editSeoDescription"
       :value="seo"
     />
 
@@ -81,6 +84,18 @@ export default {
     changeLang(lang) {
       this.currentLang = lang
       this.$emit('changeHallLang', lang)
+    },
+    editSeoUrl(url) {
+      this.seo.url = url
+    },
+    editSeoTitle(title) {
+      this.seo.title = title
+    },
+    editSeoKeywords(keywords) {
+      this.seo.keywords = keywords
+    },
+    editSeoDescription(description) {
+      this.seo.description = description
     },
     changeSeo(data) {
       this.seo = data

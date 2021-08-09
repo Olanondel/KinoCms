@@ -4,11 +4,9 @@
     <td>{{date}}</td>
     <td>{{status}}</td>
     <td class="btns">
-      <router-link :to="{name: to, params: { id }}"><i class="fa fa-edit"></i></router-link>
-      <template v-if="!notDelete">
-        <a v-if="!isFetching" @click.prevent="remove" href=""><i class="fa fa-trash-alt"></i></a>
-        <a @click.prevent v-else href=""><i class="fas fa-ban"></i></a>
-      </template>
+      <router-link :to="{name: 'promotionEdit', params: { id }}"><i class="fa fa-edit"></i></router-link>
+      <a v-if="!isFetching" @click.prevent="remove" href=""><i class="fa fa-trash-alt"></i></a>
+      <a @click.prevent v-else href=""><i class="fas fa-ban"></i></a>
     </td>
   </tr>
 </template>
@@ -22,12 +20,7 @@ export default {
     status: String,
     id: String,
     index: Number,
-    isFetching: Boolean,
-    to: String,
-    notDelete: {
-      type: Boolean,
-      default: false
-    }
+    isFetching: Boolean
   },
   methods: {
     remove() {

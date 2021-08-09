@@ -28,9 +28,12 @@
           :text="lang.type"
       />
       <Seo
-          v-model="seo"
           :text="lang.seo"
-          @change="changeSeo"
+          :value="seo"
+          @url="editSeoUrl"
+          @title="editSeoTitle"
+          @keywords="editSeoKeywords"
+          @description="editSeoDescription"
       />
 
       <SaveButtonWithRestore
@@ -96,9 +99,6 @@ export default {
       this.currentLang = value
 
       this.getLang()
-    },
-    changeSeo(data) {
-      this.seo = data
     },
     async getLang() {
       if (!this.langData) {
@@ -191,7 +191,6 @@ export default {
               this.mainImageWasEdit = false;
             });
       }
-      console.log(2);
     },
     async saveImages() {
       let storageRef = firebase.storage().ref();
@@ -210,11 +209,8 @@ export default {
         })
 
       }
-
-      console.log(this.images);
-      console.log(1);
     },
-    saveToDataBase() {
+    async saveToDataBase() {
 
       this.isRequesting = true;
 
@@ -222,11 +218,11 @@ export default {
       let from = this.$route.params.from;
       let doc;
 
-      if (id === "addToCurrent") doc = db.collection("CurrentFilms").doc();
-      else if (id === "addToFuture") doc = db.collection("FutureFilms").doc();
-      else doc = db.collection(from).doc(id);
+      if (id === "addToCurrent") doc = await db.collection("CurrentFilms").doc();
+      else if (id === "addToFuture") doc = await db.collection("FutureFilms").doc();
+      else doc = await db.collection(from).doc(id);
 
-      doc.set({
+      await doc.set({
         currentLang: this.currentLang,
         id: doc.id,
         name: this.name,
@@ -239,18 +235,30 @@ export default {
       });
 
       this.isRequesting = false;
-      console.log(3);
-      this.$router.push({name: "films"});
+      await this.$router.push({name: "films"});
     },
     async savePageData() {
       if (this.name && this.description && this.mainImage) {
+        this.isRequesting = true
         await this.saveImages()
         await this.saveMainImage()
         setTimeout(() => { this.saveToDataBase() }, 1500)
+        this.isRequesting = false
       } else {
         await this.removeFilm()
-        // new comment
       }
+    },
+    editSeoUrl(url) {
+      this.seo.url = url
+    },
+    editSeoTitle(title) {
+      this.seo.title = title
+    },
+    editSeoKeywords(keywords) {
+      this.seo.keywords = keywords
+    },
+    editSeoDescription(description) {
+      this.seo.description = description
     },
     async getPageData() {
       if (

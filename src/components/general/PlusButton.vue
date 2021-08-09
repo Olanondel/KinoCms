@@ -1,7 +1,7 @@
 <template>
   <div class="float-r general__margin">
     <router-link
-        :to="{name: 'newsEdit', params: { id: 'addNews' }}"
+        :to="{name: routeName, params: { id: routeId }}"
         type="button"
         class="btn btn-primary"><i
         class="fa fa-plus"
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: "PlusButton",
-  props: { text: String }
+  props: { text: String, routeName: String, routeId: String }
 }
 </script>
 

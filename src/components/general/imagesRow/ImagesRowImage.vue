@@ -51,5 +51,6 @@ import lodash from 'lodash'
     margin-bottom: 18px;
     min-height: 178px;
     min-width: 238px;
+    object-fit: cover;
 }
 </style>

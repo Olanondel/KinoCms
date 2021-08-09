@@ -1,101 +1,91 @@
 <template>
-    <div class="seo general__margin">
-        <label for="" class="general__text">{{text}}</label>
-        <form class="seo-content">
-            <p class="form-url">
-                <label for="">URL</label>
-                <input 
-                    class="form-control" 
-                    type="text" 
-                    placeholder="URL"
-                    v-model="seo.url"
-                    @input="change"
-                >
-            </p>
+  <div class="seo general__margin">
+    <label for="" class="general__text">{{ text }}</label>
+    <form class="seo-content">
+      <p class="form-url">
+        <label>URL</label>
+        <input
+            class="form-control"
+            type="text"
+            placeholder="URL"
+            @input="$emit('url', $event.target.value)"
+            :value="value.url"
+        >
+      </p>
 
-            <p class="form-title">
-                <label for="">Title</label>
-                <input 
-                    class="form-control" 
-                    type="text" 
-                    placeholder="Title"
-                    v-model="seo.title"
-                    @input="change"
-                >
-            </p>
+      <p class="form-title">
+        <label for="">Title</label>
+        <input
+            class="form-control"
+            type="text"
+            placeholder="Title"
+            @input="$emit('title', $event.target.value)"
+            :value="value.title"
+        >
+      </p>
 
-            <p class="form-keywords">
-                <label for="">Keywords</label>
-                <input 
-                    class="form-control" 
-                    type="text" 
-                    placeholder="Keywords"
-                    v-model="seo.keywords"
-                    @input="change"
-                >
-            </p>
+      <p class="form-keywords">
+        <label for="">Keywords</label>
+        <input
+            class="form-control"
+            type="text"
+            placeholder="Keywords"
+            @input="$emit('keywords', $event.target.value)"
+            :value="value.keywords"
+        >
+      </p>
 
-            <p class="form-description">
-                <label for="">Description</label>
-                <textarea 
-                    class="form-control" 
-                    placeholder="Description"
-                    v-model="seo.description"
-                    @input="change"
-                />
-            </p>    
-        </form>
-    </div>
+      <p class="form-description">
+        <label for="">Description</label>
+        <textarea
+            class="form-control"
+            placeholder="Description"
+            @input="$emit('description', $event.target.value)"
+            :value="value.description"
+        />
+      </p>
+    </form>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'Seo',
-        props: {
-            value: Object,
-            text: {
-              type: String,
-              default: 'SEO блок'
-            }
-        },
-      data() {
-        return {
-          seo: {
-            url: this.value.url,
-            title: this.value.title,
-            keywords: this.value.keywords,
-            description: this.value.description,
-          }
-        }
-      },
-        methods: {
-            change() {
-                this.$emit('change', this.seo)
-            }
-        },
+export default {
+  name: 'Seo',
+  props: {
+    value: Object,
+    text: {
+      type: String,
+      default: 'SEO блок'
     }
+  },
+  methods: {
+    change() {
+      this.$emit('change', this.seo)
+    }
+  },
+}
 </script>
 
 <style scoped>
-    .seo {
-        display: flex;
-    }
+.seo {
+  display: flex;
+}
 
-    .seo-content {
-        width: 100%;
-    }
+.seo-content {
+  width: 100%;
+}
 
-    p {
-        display: flex;
-    }
+p {
+  display: flex;
+}
 
-    label {
-        width: 100px;
-        min-width: 100px;
-    }
+label {
+  width: 100px;
+  min-width: 100px;
+}
 
-    textarea {
-        resize: vertical;
-        min-height: 220px;
-    }
+textarea {
+  resize: vertical;
+  min-height: 220px;
+}
 </style>

@@ -44,7 +44,10 @@
     <Seo
         :text="cinemaLang.seo"
         :value="cinema.seo"
-        @change="changeSeo"
+        @url="editSeoUrl"
+        @title="editSeoTitle"
+        @keywords="editSeoKeywords"
+        @description="editSeoDescription"
     />
 
     <SaveButton
@@ -91,6 +94,18 @@ data() {
   methods: {
     removeLogotypeImage() {
       this.$emit('removeLogotypeImage')
+    },
+    editSeoUrl(url) {
+      this.$emit('url', url)
+    },
+    editSeoTitle(title) {
+      this.$emit('title', title)
+    },
+    editSeoKeywords(keywords) {
+      this.$emit('keywords', keywords)
+    },
+    editSeoDescription(description) {
+      this.$emit('description', description)
     },
     changeLogotypeImage(file) {
       this.$emit('changeLogotypeImage', file)

@@ -53,7 +53,8 @@ export default {
     index: Number,
     slideUrl: String,
     slideText: String,
-    slideImage: String
+    slideImage: String,
+    isRemoving: Boolean
   },
   data() {
     return {
@@ -119,6 +120,7 @@ export default {
   margin: 0 0 15px 0;
   width: 260px;
   height: 208px;
+  object-fit: cover;
 }
 
 .slide-edit__button {

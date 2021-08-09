@@ -3,9 +3,9 @@
     <router-link class="cinema__link" :to="'/cinemaConfig/' + id">
       <div class="image-wrap">
         <CloseElementButton :isFetching="isFetching" @remove="removeCinema(index, id)" />
-        <img class="cinema-image" :src="logotype" alt="cinema">
+        <img class="cinema-image" :src="logotype || require('@/assets/image/empty.jpg')" alt="cinema">
       </div>
-      <div class="cinema__text">{{title}}</div>
+      <div class="cinema__text">{{title || 'Без названия'}}</div>
     </router-link>
   </div>
 </template>
@@ -19,10 +19,11 @@ export default {
     id: String,
     isFetching: Boolean,
     logotype: {
-      type: String,
-      default: require('../../assets/image/empty.jpg')
+      type: String
     },
-    title: String
+    title: {
+      type: String
+    }
   },
   components: {CloseElementButton},
   methods: {
@@ -56,6 +57,7 @@ export default {
   margin-bottom: 15px;
   height: 180px;
   min-height: 180px;
+  object-fit: cover;
 }
 
 .cinema__text {

@@ -1,7 +1,7 @@
 <template>
   <div class="card-body" >
     <div v-show="!data.length">
-      <h3>Список {{startText}} пуст. Начните создавать свою первую {{endText}}!</h3>
+      <h3>Список новостей пуст. Начните создавать свою первую новость!</h3>
     </div>
     <table class="table table-bordered" v-show="data.length">
       <thead>
@@ -15,16 +15,15 @@
       <tbody>
 
       <NewsTableRow
-        v-for="(promotion, index) in data"
-        :key="promotion.id"
-        :title="promotion.title"
-        :date="promotion.date"
-        :status="promotion.stateText"
-        :id="promotion.id"
+        v-for="(news, index) in data"
+        :key="news.id"
+        :title="news.title"
+        :date="news.date"
+        :status="news.stateText"
+        :id="news.id"
         :index="index"
-        :isFetching="promotion.isFetching"
+        :isFetching="news.isFetching"
         @remove="remove"
-        :to="to"
       />
 
       </tbody>
@@ -33,16 +32,13 @@
 </template>
 
 <script>
-import NewsTableRow from "./NewsTableRow";
+import NewsTableRow from "./PromotionsTableRow";
 export default {
   name: "Table",
   components: {NewsTableRow},
   props: {
     data: Array,
-    isFetching: Boolean,
-    to: String,
-    startText: String,
-    endText: String
+    isFetching: Boolean
   },
   methods: {
     remove(id, index) {
@@ -56,9 +52,5 @@ export default {
 .table {
   max-width: 60%;
   margin: 0 auto;
-}
-
-h3 {
-  text-align: center;
 }
 </style>

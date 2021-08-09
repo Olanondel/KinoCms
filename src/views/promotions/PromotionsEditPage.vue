@@ -1,5 +1,7 @@
 <template>
-  <section class="newsEditPage">
+  <Preloader v-if="!init" />
+
+  <section v-else class="newsEditPage">
     <Language :currentLang="currentLang" @changeLang="changeLang">
       <SwitcherWithText v-model="state" :stateText="stateText" />
     </Language>
@@ -12,7 +14,7 @@
         />
       </div>
       <div>
-        <DateWithText v-model="date" />
+        <DateWithText :text="lang.date" v-model="date" />
       </div>
     </div>
 
@@ -22,24 +24,24 @@
     />
 
     <ImageWithTwoButton
-      :image="mainImage"
-      :text="lang.mainImageText"
-      :addText="lang.addText"
-      :removeText="lang.removeText"
-      @changeImage="changeMainImage"
-      @removeImage="removeMainImage"
+        :image="mainImage"
+        :text="lang.mainImage"
+        :addText="lang.addButton"
+        :removeText="lang.removeButton"
+        @changeImage="changeMainImage"
+        @removeImage="removeMainImage"
     />
 
     <ImageRow
         :data="images"
-        :text="lang.imageRowText"
-        :btnText="lang.addText"
+        :text="lang.rowImageSize"
+        :btnText="lang.addButton"
         @change="changeRowImage"
     />
 
     <YoutubeLink
-      :text="lang.youtubeText"
-      v-model="youtubeLink"
+        :text="lang.youtubeLink"
+        v-model="youtubeLink"
     />
 
     <Seo
@@ -50,7 +52,11 @@
         @description="editSeoDescription"
     />
 
-    <SaveButton :isFetching="isFetching" @saveEvent="save" :text="lang.saveBtnText" />
+    <SaveButton
+        :isFetching="isFetching"
+        :text="lang.saveButton"
+        @saveEvent="save"
+    />
 
 
   </section>
@@ -65,12 +71,15 @@ import ImageWithTwoButton from "../../components/general/ImageWithTwoButton";
 import YoutubeLink from "../../components/general/YoutubeLink";
 import Seo from "../../components/general/Seo";
 import SaveButton from "../../components/general/SaveButton";
-import server from '@/requests/newsPage'
+import server from '@/requests/requests'
 import ImageRow from "../../components/general/imagesRow/ImagesRow";
 import DateWithText from "../../components/general/DateWithText";
+import db from '@/firebase/firebaseInit.js'
+import Preloader from "../../components/general/Preloader";
 export default {
-  name: "NewsEditPage",
+  name: "PromotionsEditPage",
   components: {
+    Preloader,
     DateWithText,
     ImageRow,
     SaveButton,
@@ -80,8 +89,8 @@ export default {
       title: '',
       date: '',
       currentLang: 'ru',
-      state: true,
-      stateText: 'ВКЛ',
+      state: null,
+      stateText: 'ВЫКЛ',
       description: '',
       mainImage: '',
       mainImageFile: null,
@@ -133,7 +142,7 @@ export default {
     async changeLang(lang) {
       this.currentLang = lang
 
-      let result = await server.getLang(this.currentLang)
+      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Promotions').collection('Promotions').doc(lang))
 
       this.lang = result.data()
     },
@@ -153,8 +162,8 @@ export default {
     async getData() {
       let id = this.$route.params.id
 
-      if (id) {
-        let data = await server.getNewsData(id)
+      if (id && id !== 'addPromotion') {
+        let data = await server.getCurrentData(id, 'Promotions')
 
         for (let value in data) {
           this[value] = data[value]
@@ -165,15 +174,29 @@ export default {
     },
     async save() {
       this.isFetching = true
-      this.id = await server.getId(this.id)
+      this.id = await server.getId(this.id, 'Promotions')
 
       if (!this.date) {
         this.date = this.getDate()
       }
 
-      await server.save(this.$data)
+      await server.save({
+        title: this.title,
+        date: this.date,
+        currentLang: this.currentLang,
+        stateText: this.stateText,
+        description: this.description,
+        mainImage: this.mainImage,
+        images: ['', '', '', '', ''],
+        youtubeLink: this.youtubeLink,
+        state: this.state,
+        id: this.id,
+        init: true,
+        seo: this.seo,
+        isFetching: false
+      }, 'Promotions', this.mainImageFile, this.images, this.imagesFiles)
       this.isFetching = false
-      this.$router.push({name: 'news'})
+      await this.$router.push({name: 'promotions'})
     },
     removeMainImage() {
       this.mainImage = ''
@@ -191,13 +214,22 @@ export default {
   },
   watch: {
     state: function () {
-      if (this.state) { this.stateText = 'ВКЛ' }
-      else { this.stateText = 'ВЫКЛ' }
+      if (this.state) {
+        /* eslint-env jquery */
+        this.stateText = 'ВКЛ'
+        $('#toggle-demo').bootstrapToggle('on')
+      }
+      else {
+        this.stateText = 'ВЫКЛ'
+        $('#toggle-demo').bootstrapToggle('off')
+      }
     }
   },
   mounted() {
     this.getLang()
     this.getData()
+  },
+  created() {
   }
 }
 </script>

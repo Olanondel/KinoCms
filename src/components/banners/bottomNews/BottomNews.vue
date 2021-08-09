@@ -83,7 +83,7 @@ export default {
     addSlide() {
       this.slides.push({
         id: +Math.random(),
-        image: "@/assets/image/city.jpg",
+        image: ".../../../assets/image/empty.jpg",
         url: "",
         imageChanged: null,
       });
@@ -117,21 +117,20 @@ export default {
         `Banners&Sliders/BottomNewsSlider/${"slide" + slide}.jpg`
       );
 
-      await ref
-        .put(this.slideImageFiles[slide])
-        .then(() => ref.getDownloadURL())
-        .then((e) => (this.slides[slide].image = e));
+      await ref.put(this.slideImageFiles[slide])
+      let link = await ref.getDownloadURL()
+      this.slides[slide].image = link
     },
 
     async saveSliderSettings() {
       this.isFetching = true;
 
-      this.slides.forEach((slide, index) => {
+      await Promise.all(this.slides.map(async (slide, index) => {
         if (slide.imageChanged) {
-          this.setImageRef(index);
+          await this.setImageRef(index);
           this.slides[index].imageChanged = false;
         }
-      });
+      }))
 
       const bottomNewsSliderConfig = await db
         .collection("bottomNewsSliderConfig")
