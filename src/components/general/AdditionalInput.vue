@@ -27,8 +27,8 @@ export default {
 <style scoped>
 
 .input-with-text__input {
-  max-width: 340px;
-  width: 340px;
+  max-width: 300px;
+  width: 300px;
 }
 
 .add-input {

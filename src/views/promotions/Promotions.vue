@@ -47,14 +47,9 @@ export default {
     async removePromotion(id, index) {
       if (id) {
         this.promotions[index].isFetching = true
-        try {
           await server.removeElement(id, this.promotions[index].mainImage, this.promotions[index].images, 'Promotions')
           this.promotions.splice(index, 1)
           this.isFetching = false
-        } catch (err) {
-          alert(err)
-          this.promotions[index].isFetching = false
-        }
       }
     },
   },

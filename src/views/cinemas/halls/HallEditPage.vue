@@ -177,9 +177,9 @@ export default {
       }
     }
   },
-  created() {
-    this.getHallData()
-    this.getLang()
+  async created() {
+    await this.getHallData()
+    await this.getLang()
   },
   mounted() {
 

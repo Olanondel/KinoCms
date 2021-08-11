@@ -1,13 +1,13 @@
 <template>
   <div class="lang-tabs">
-    <slot />
+    <slot/>
     <div class="icheck-success d-inline">
-      <input @change="change" type="radio" name="r3" id="radioSuccess1" value="ru" v-model="picked" />
+      <input @change="change" type="radio" name="r3" id="radioSuccess1" value="ru" v-model="picked"/>
       <label for="radioSuccess1">Русский</label>
     </div>
 
     <div class="icheck-success d-inline">
-      <input @change="change" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked" />
+      <input @change="change" type="radio" name="r3" id="radioSuccess2" value="ua" v-model="picked"/>
       <label for="radioSuccess2">Українська</label>
     </div>
   </div>
@@ -18,18 +18,26 @@ export default {
   props: {
     currentLang: {
       type: String,
-      default: 'ru'
     }
   },
   data() {
-      return {
-        picked: this.currentLang
-      }
-    },
+    return {
+      picked: this.currentLang
+    }
+  },
+  watch: {
+    currentLang: function () {
+      this.picked = this.currentLang
+    }
+  },
+  computed: {},
   methods: {
     change() {
       this.$emit('changeLang', this.picked)
     }
+  },
+  afterMounted() {
+    this.$forceUpdate(this.picked)
   }
 };
 </script>

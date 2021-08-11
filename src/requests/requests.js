@@ -44,45 +44,67 @@ export default {
 
     return id
   },
-  saveToDb(data, folder) {
-    db.collection(folder).doc(data.id).set(data)
+  saveToDb(data, folder, doc) {
+    let id
+
+    if (doc) {
+      id = doc
+    } else { id = data.id }
+
+
+    db.collection(folder).doc(id).set(data)
   },
-  async save(data, folder, mainImageFile, images, imagesFiles) {
+  async save(data, folder, mainImageFile, images, imagesFiles, doc) {
     if (mainImageFile) {
       data.mainImage = await this.uploadMainImage(mainImageFile, data.id, folder)
     }
     if (imagesFiles && imagesFiles.length) {
       data.images = await this.uploadImages(imagesFiles, folder, data.id, images)
     }
-    await this.saveToDb(data, folder)
+    await this.saveToDb(data, folder, doc)
+  },
+  async removeImage(id, folder, image) {
+    if (id) {
+      if (image) {
+        let storageRef = firebase.storage().ref()
+
+        let imageRef = storageRef.child(`${folder}/${id}/mainImage.jpg`)
+        await imageRef.delete()
+      }
+    }
+  },
+  async removeImages(id, folder, images) {
+    if (images && images.length) {
+      let storageRef = firebase.storage().ref()
+
+      await Promise.all(images.map(async (el, index) => {
+        if (el.length) {
+          let imageRef = storageRef.child(`${folder}/${id}/row/image-${index}.jpg`)
+          await imageRef.delete()
+        }
+      }))
+    }
   },
   async removeElement(id, image, images, folder) {
     if (id) {
-      let storageRef = firebase.storage().ref()
-
-      if (image) {
-        let mainImageRef = storageRef.child(`${folder}/${id}/mainImage.jpg`)
-        await mainImageRef.delete()
-      }
-
-      if (images && images.length) {
-        await Promise.all(images.map(async (el, index) => {
-          if (el.length) {
-            let imageRef = storageRef.child(`${folder}/${id}/row/image-${index}.jpg`)
-
-            await imageRef.delete()
-          }
-        }))
-      }
+      await this.removeImage(id, folder, image)
+      await this.removeImages(id, folder, images)
 
       let ref = db.collection(folder).doc(id)
       await ref.delete()
     }
   },
-  async getData(folder) {
-    let news = await db.collection(folder).get()
+  async getData(folder, doc) {
+    let ref
 
-    return news.docs
+    if (doc) {
+      ref = await db.collection(folder).doc(doc).get()
+
+      return ref.data()
+    } else {
+      ref = await db.collection(folder).get()
+      return ref.docs
+    }
   },
   async getCurrentData(id, folder) {
     let news = await db.collection(folder).doc(id).get()

@@ -1,5 +1,5 @@
 <template>
-  <div class="card-body" >
+  <div class="card-body general__margin" >
     <div v-show="!data.length">
       <h3>Список {{startText}} пуст. Начните создавать свою первую {{endText}}!</h3>
     </div>
@@ -20,11 +20,12 @@
         :title="promotion.title"
         :date="promotion.date"
         :status="promotion.stateText"
-        :id="promotion.id"
         :index="index"
         :isFetching="promotion.isFetching"
         @remove="remove"
-        :to="to"
+        to="general"
+        :id="promotion.id"
+        :not-delete="promotion.notDelete"
       />
 
       </tbody>
@@ -40,7 +41,6 @@ export default {
   props: {
     data: Array,
     isFetching: Boolean,
-    to: String,
     startText: String,
     endText: String
   },

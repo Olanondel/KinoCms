@@ -1,7 +1,7 @@
 <template>
   <div class="input-with-text general__margin">
     <label class="input-with-text__text general__text">{{ text }}</label>
-    <div>
+    <div class="general__input">
       <input
           type="text"
           class="form-control input-with-text__input"
@@ -37,7 +37,8 @@ export default {
   display: flex;
 }
 
-.input-with-text__input {
-  max-width: 340px;
+.input-with-text__input, general__input {
+  max-width: 300px;
+  width: 300px;
 }
 </style>

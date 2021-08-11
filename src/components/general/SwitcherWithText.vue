@@ -8,7 +8,7 @@
         data-on-color="success"
         data-off-color="danger"
         checked
-        :isChecked="isCheck"
+        :isChecked="isChecked"
         @change="$emit('change', $event.target.checked)"
     >
   </div>
@@ -22,11 +22,12 @@ export default {
     event: 'change'
   },
   props: {
-    isCheck: Boolean,
+    isChecked: Boolean,
     stateText: String
   },
   data() {
     return {
+
     }
   },
   methods: {
@@ -38,13 +39,13 @@ export default {
       /* eslint-env jquery */
 
       let switcherState = $("[name='my-checkbox']")
-
-      switcherState.bootstrapSwitch('state', this.isCheck);
-      console.log(this.isCheck)
+      console.log(this.isChecked)
+      switcherState.bootstrapSwitch('state', this.isChecked);
 
       switcherState.on('switchChange.bootstrapSwitch', function () {
         $(this)[0].dispatchEvent(new Event("change"))
       })
+      console.log(this.isChecked)
     },
   },
   mounted() {

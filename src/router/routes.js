@@ -14,6 +14,7 @@ import CinemaEditPage from "@/views/cinemas/CinemaEditPage";
 import NewsEditPage from "@/views/news/NewsEditPage";
 import PromotionsEditPage from "../views/promotions/PromotionsEditPage";
 import MainEdit from "../views/pages/pages/Main";
+import GeneralPage from "../views/pages/pages/GeneralPage";
 
 export const routes = [
   {path: "", name: "statistic", component: Statistic},
@@ -24,7 +25,9 @@ export const routes = [
   {path: "/promotions", name: "promotions", component: Promotions},
   {path: "/promotionEdit/:id", name: "promotionEdit", component: PromotionsEditPage},
   {path: "/pages/", name: "pages", component: Pages},
-  {path: "/mainPageEdit", name: "mainEdit", component: MainEdit},
+  {path: "/pages/MainPage", name: "MainEdit", component: MainEdit},
+  {path: "/pages/:id", name: "general", component: GeneralPage},
+  {path: "/mainPage", name: "mainEdit", component: MainEdit},
   {path: "/users", name: "users", component: Users},
   {path: "/mailing", name: "mailing", component: Mailing},
   {path: "/films/:id", name: 'filmEdit', component: FilmEditPage},

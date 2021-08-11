@@ -1,15 +1,15 @@
 <template>
-  <Preloader v-if="!init" />
+  <Preloader v-if="!init"/>
 
   <section v-else class="newsEditPage">
     <Language :currentLang="currentLang" @changeLang="changeLang">
-      <SwitcherWithText v-model="state" :stateText="stateText" />
+      <SwitcherWithText v-model="state" :stateText="stateText"/>
     </Language>
 
 
-        <InputWithText text="Телефон" v-model="tel1">
-          <AdditionalInput text="Телефон" v-model="tel2" />
-        </InputWithText>
+    <InputWithText text="Телефон" v-model="tel1">
+      <AdditionalInput text="Телефон" v-model="tel2"/>
+    </InputWithText>
 
     <TextAreaWithText
         v-model="seoText"
@@ -45,25 +45,29 @@ import server from '@/requests/requests'
 import db from '@/firebase/firebaseInit.js'
 import Preloader from "../../../components/general/Preloader";
 import AdditionalInput from "../../../components/general/AdditionalInput";
+
 export default {
   name: "MainEdit",
   components: {
     AdditionalInput,
     Preloader,
     SaveButton,
-    Seo, TextAreaWithText, InputWithText, Language, SwitcherWithText},
+    Seo, TextAreaWithText, InputWithText, Language, SwitcherWithText
+  },
   data() {
     return {
       tel1: '',
       tel2: '',
-      currentLang: 'ru',
+      currentLang: null,
       state: null,
+      to: "mainEdit",
       stateText: 'ВЫКЛ',
       seoText: '',
       date: '',
-      id: 'rKyQ5fbMmg57Euq4brYA',
+      id: 'MainPage',
       init: true,
       isFetching: false,
+      notDelete: true,
       seo: {
         url: '', title: '', keywords: '', description: ''
       },
@@ -102,12 +106,12 @@ export default {
 
       this.lang = result.data()
     },
-    getLang() {
+    async getLang() {
       if (!this.currentLang) {
         this.currentLang = navigator.language || navigator.userLanguage
       }
 
-      this.changeLang(this.currentLang)
+      await this.changeLang(this.currentLang)
     },
     changeSeo(seo) {
       this.seo = seo
@@ -115,11 +119,11 @@ export default {
     async getData() {
       let id = this.id
 
-        let data = await server.getCurrentData(id, 'Pages')
+      let data = await server.getCurrentData(id, 'Pages')
 
-        for (let value in data) {
-          this[value] = data[value]
-        }
+      for await (let [key, value] of Object.entries(data)) {
+        this[key] = value
+      }
     },
     async save() {
       this.isFetching = true
@@ -138,10 +142,11 @@ export default {
         seoText: this.seoText,
         state: this.state,
         id: this.id,
+        notDelete: this.notDelete,
         init: true,
         seo: this.seo,
         isFetching: false
-      }, 'Pages', null, null, null)
+      }, 'Pages', null, null, null, 'MainPage')
       this.isFetching = false
       await this.$router.push({name: 'pages'})
     },
@@ -151,19 +156,16 @@ export default {
       if (this.state) {
         /* eslint-env jquery */
         this.stateText = 'ВКЛ'
-        $('#toggle-demo').bootstrapToggle('on')
-      }
-      else {
+        $("[name='my-checkbox']").bootstrapSwitch('state', true)
+      } else {
         this.stateText = 'ВЫКЛ'
-        $('#toggle-demo').bootstrapToggle('off')
+        $("[name='my-checkbox']").bootstrapSwitch('state', false)
       }
     }
   },
-  mounted() {
-    this.getLang()
-    this.getData()
-  },
-  created() {
+  async mounted() {
+    await this.getData()
+    await this.getLang()
   }
 }
 </script>

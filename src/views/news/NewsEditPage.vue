@@ -195,9 +195,9 @@ export default {
       else { this.stateText = 'ВЫКЛ' }
     }
   },
-  mounted() {
-    this.getLang()
-    this.getData()
+  async mounted() {
+    await this.getData()
+    await this.getLang()
   }
 }
 </script>

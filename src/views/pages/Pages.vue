@@ -5,12 +5,13 @@
 
     <PlusButton
         text="Создать Новую"
+        route-name="general"
+        route-id="addPage"
     />
 
     <NewsTable
         @remove="removeElement"
         :data="pages"
-        to="mainEdit"
         start-text="Страниц"
         end-text="Страницу"
     />
@@ -39,7 +40,6 @@ export default {
       data.forEach(el => {
         this.pages.push(el.data())
       })
-
       this.init = true
     },
     async removeElement(id, index) {

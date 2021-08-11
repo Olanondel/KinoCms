@@ -421,9 +421,9 @@ export default {
       }
     },
   },
-  mounted() {
-    this.getCinemaLang()
-    this.getData()
+  async mounted() {
+    await this.getData()
+    await this.getCinemaLang()
   }
 }
 </script>

@@ -290,8 +290,8 @@ export default {
     }
   },
   computed: {},
-  created() {
-    this.getPageData();
+  async created() {
+    await this.getPageData();
   }
 }
 </script>

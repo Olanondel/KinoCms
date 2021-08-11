@@ -1,22 +1,15 @@
 <template>
-  <Preloader v-if="!init" />
+  <Preloader v-if="!init"/>
 
   <section v-else class="newsEditPage">
     <Language :currentLang="currentLang" @changeLang="changeLang">
-      <SwitcherWithText v-model="state" :stateText="stateText" />
+      <SwitcherWithText v-model="state" :stateText="stateText"/>
     </Language>
 
-    <div class="row-wrap">
-      <div>
-        <InputWithText
-            :text="lang.title"
-            v-model="title"
-        />
-      </div>
-      <div>
-        <DateWithText :text="lang.date" v-model="date" />
-      </div>
-    </div>
+    <InputWithText
+        :text="lang.title"
+        v-model="title"
+    />
 
     <TextAreaWithText
         v-model="description"
@@ -39,11 +32,6 @@
         @change="changeRowImage"
     />
 
-    <YoutubeLink
-        :text="lang.youtubeLink"
-        v-model="youtubeLink"
-    />
-
     <Seo
         :value="seo"
         @url="editSeoUrl"
@@ -63,27 +51,26 @@
 </template>
 
 <script>
-import SwitcherWithText from "../../components/general/SwitcherWithText";
-import Language from "../../components/general/Language";
-import InputWithText from "../../components/general/InputWithText";
-import TextAreaWithText from "../../components/general/TextAreaWithText";
-import ImageWithTwoButton from "../../components/general/ImageWithTwoButton";
-import YoutubeLink from "../../components/general/YoutubeLink";
-import Seo from "../../components/general/Seo";
-import SaveButton from "../../components/general/SaveButton";
+import SwitcherWithText from "@/components/general/SwitcherWithText";
+import Language from "@/components/general/Language";
+import InputWithText from "@/components/general/InputWithText";
+import TextAreaWithText from "@/components/general/TextAreaWithText";
+import ImageWithTwoButton from "@/components/general/ImageWithTwoButton";
+import Seo from "@/components/general/Seo";
+import SaveButton from "@/components/general/SaveButton";
 import server from '@/requests/requests'
-import ImageRow from "../../components/general/imagesRow/ImagesRow";
-import DateWithText from "../../components/general/DateWithText";
+import ImageRow from "@/components/general/imagesRow/ImagesRow";
 import db from '@/firebase/firebaseInit.js'
-import Preloader from "../../components/general/Preloader";
+import Preloader from "@/components/general/Preloader";
+
 export default {
-  name: "PromotionsEditPage",
+  name: "GeneralPage",
   components: {
     Preloader,
-    DateWithText,
     ImageRow,
     SaveButton,
-    Seo, YoutubeLink, ImageWithTwoButton, TextAreaWithText, InputWithText, Language, SwitcherWithText},
+    Seo, ImageWithTwoButton, TextAreaWithText, InputWithText, Language, SwitcherWithText
+  },
   data() {
     return {
       title: '',
@@ -96,7 +83,6 @@ export default {
       mainImageFile: null,
       images: ['', '', '', '', ''],
       imagesFiles: [],
-      youtubeLink: '',
       id: '',
       init: false,
       isFetching: false,
@@ -142,7 +128,7 @@ export default {
     async changeLang(lang) {
       this.currentLang = lang
 
-      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Promotions').collection('Promotions').doc(lang))
+      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Pages').collection('aboutCinema').doc(lang))
 
       this.lang = result.data()
     },
@@ -156,25 +142,15 @@ export default {
     changeDate(date) {
       this.date = date
     },
-    changeSeo(seo) {
-      this.seo = seo
-    },
     async getData() {
-      let id = this.$route.params.id
+      let data = await server.getCurrentData(this.$route.params.id, 'Pages')
 
-      if (id && id !== 'addPromotion') {
-        let data = await server.getCurrentData(id, 'Promotions')
-
-        for (let value in data) {
-          this[value] = data[value]
-        }
-      } else {
-        this.init = true
+      for (let [key, value] of Object.entries(data)) {
+        this[key] = value
       }
     },
     async save() {
       this.isFetching = true
-      this.id = await server.getId(this.id, 'Promotions')
 
       if (!this.date) {
         this.date = this.getDate()
@@ -182,21 +158,21 @@ export default {
 
       await server.save({
         title: this.title,
-        date: this.date,
+        date: this.getDate(),
         currentLang: this.currentLang,
+        state: this.state,
         stateText: this.stateText,
         description: this.description,
         mainImage: this.mainImage,
         images: this.images,
-        youtubeLink: this.youtubeLink,
-        state: this.state,
         id: this.id,
+        notDelete: true,
         init: true,
+        isFetching: false,
         seo: this.seo,
-        isFetching: false
-      }, 'Promotions', this.mainImageFile, this.images, this.imagesFiles)
+      }, 'Pages', this.mainImageFile, this.images, this.imagesFiles, this.$route.params.id)
       this.isFetching = false
-      await this.$router.push({name: 'promotions'})
+      await this.$router.push({name: 'pages'})
     },
     removeMainImage() {
       this.mainImage = ''
@@ -207,7 +183,9 @@ export default {
 
       let reader = new FileReader()
 
-      reader.onload =  () => { this.mainImage = reader.result }
+      reader.onload = () => {
+        this.mainImage = reader.result
+      }
 
       reader.readAsDataURL(file)
     },
@@ -217,17 +195,16 @@ export default {
       if (this.state) {
         /* eslint-env jquery */
         this.stateText = 'ВКЛ'
-        $('#toggle-demo').bootstrapToggle('on')
-      }
-      else {
+        $("[name='my-checkbox']").bootstrapSwitch('state', true)
+      } else {
         this.stateText = 'ВЫКЛ'
-        $('#toggle-demo').bootstrapToggle('off')
+        $("[name='my-checkbox']").bootstrapSwitch('state', false)
       }
     }
   },
-  mounted() {
-    this.getLang()
-    this.getData()
+  async mounted() {
+    await this.getData()
+    await this.getLang()
   },
   created() {
   }
