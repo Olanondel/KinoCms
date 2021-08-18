@@ -3,7 +3,7 @@
     <label class="input-with-text__text general__text">{{ text }}</label>
     <div class="general__input">
       <input
-          type="text"
+          :type="type"
           class="form-control input-with-text__input"
           :placeholder="text"
           :value="value"
@@ -27,6 +27,10 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    type: {
+      type: String,
+      default: 'text'
     }
   }
 };
@@ -35,10 +39,11 @@ export default {
 <style scoped>
 .input-with-text {
   display: flex;
+  align-items: center;
 }
 
 .input-with-text__input, general__input {
-  max-width: 300px;
-  width: 300px;
+  max-width: 280px;
+  width: 280px;
 }
 </style>

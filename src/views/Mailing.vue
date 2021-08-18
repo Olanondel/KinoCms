@@ -1,9 +1,5 @@
 <template>
-    <div>
-
-
-    </div>
-
+  <h1>Mailing</h1>
 </template>
 
 <script>

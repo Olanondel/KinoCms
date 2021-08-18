@@ -86,6 +86,7 @@ export default {
       id: '',
       init: false,
       isFetching: false,
+      to: '',
       seo: {
         url: '', title: '', keywords: '', description: ''
       },

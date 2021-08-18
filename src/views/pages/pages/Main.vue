@@ -142,6 +142,7 @@ export default {
         seoText: this.seoText,
         state: this.state,
         id: this.id,
+        to: 'MainEdit',
         notDelete: this.notDelete,
         init: true,
         seo: this.seo,

@@ -3,6 +3,7 @@
     <label class="textarea-with-text__text general__text">{{text}}</label>
     <textarea
       class="form-control textarea-with-text__input"
+
       :placeholder="text"
       :value="value"
       @input="$emit('input', $event.target.value)"

@@ -23,7 +23,7 @@
         :index="index"
         :isFetching="promotion.isFetching"
         @remove="remove"
-        to="general"
+        :to="promotion.to"
         :id="promotion.id"
         :not-delete="promotion.notDelete"
       />
@@ -42,7 +42,7 @@ export default {
     data: Array,
     isFetching: Boolean,
     startText: String,
-    endText: String
+    endText: String,
   },
   methods: {
     remove(id, index) {

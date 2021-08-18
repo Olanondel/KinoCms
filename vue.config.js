@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/kinoCmsProj/'
+  publicPath: '/kinoCmsDep/'
 }

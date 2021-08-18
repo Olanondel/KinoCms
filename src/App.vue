@@ -67,13 +67,13 @@ label {
 }
 
 .content-wrapper > .content {
-  padding: 0 80px;
+  /*padding: 0 80px;*/
 }
 
 .general__text {
-  margin-right: 35px;
-  width: 100px;
-  min-width: 100px;
+  margin-right: 20px;
+  width: 80px;
+  min-width: 80px;
 }
 
 .general__margin {

@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     changeState(e) {
-
+      console.log('be changed')
       this.$emit('changeState', e.target.checked)
     },
     switcherInit() {
