@@ -128,8 +128,9 @@ export default {
       this.init = true
     },
     addToMailing(value, type) {
-      console.log(value, type)
-      this.mailingList[type].push(value)
+      if (!this.mailingList[type].includes(value)) {
+        this.mailingList[type].push(value)
+      }
     },
     async removeUser(id, index) {
       this.users[index].isFetching = true
