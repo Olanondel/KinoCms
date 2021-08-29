@@ -26,8 +26,8 @@
       </div>
     </div>
 
-    <router-link :to="{name: to, params: { mode: from }}">
-      <button type="button" class="btn btn-secondary btn-xs">Выбрать пользователей</button>
+    <router-link :to="{name: to, params: { mode: checkMode, type: from, messageText }}">
+      <button type="button" class="btn btn-warning btn-xs">Выбрать пользователей</button>
     </router-link>
   </div>
 </template>
@@ -36,14 +36,37 @@
 export default {
   name: "RadioWithButtonAndText",
   props: {
+    messageText: {
+      type: String,
+      default: ''
+    },
     id1: String,
     id2: String,
-    text1: String,
-    text2: String,
-    value1: String,
-    value2: String,
+    text1: {
+      type: String,
+      default: 'Все пользователи'
+    },
+    text2: {
+      type: String,
+      default: 'Выборочно'
+    },
+    value1: {
+      type: String,
+      default: 'all'
+    },
+    value2: {
+      type: String,
+      default: 'selective'
+    },
     name: String,
-    to: String,
+    to: {
+      type: String,
+      default: 'users'
+    },
+    checkMode: {
+      type: Boolean,
+      default: false
+    },
     from: String
   }
 }

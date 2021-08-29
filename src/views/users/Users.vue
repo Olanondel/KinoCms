@@ -1,7 +1,7 @@
 <template>
   <Preloader v-if="!init"/>
   <div v-else>
-    <h2 v-if="!users.length" style="text-align: center; margin: 20px 0">Список пользователей пуст</h2>
+    <h2 v-if="!this.allUsers" style="text-align: center; margin: 20px 0">Список пользователей пуст</h2>
 
     <div class="card general__margin" v-else>
       <div class="card-header">
@@ -80,34 +80,35 @@ import UsersTableHeader from "../../components/users/UsersTableHeader";
 import UsersTableRow from "../../components/users/UsersTableRow";
 import server from '../../requests/requests'
 import SaveButton from "../../components/general/SaveButton";
+import {mapGetters} from 'vuex'
 
 export default {
   components: {SaveButton, UsersTableRow, UsersTableHeader, Preloader},
   name: "users",
   data() {
     return {
-      init: false,
-      users: [],
+      init: true,
       searchText: '',
       mailingList: {
         email: [],
-        phone: []
+        phone: [],
       }
     }
   },
   computed: {
+    ...mapGetters(["allUsers"]),
     filteredUsers() {
-      return this.users.filter(el => {
+      return this.allUsers.filter(el => {
         let arr = Object.values(el)
 
         return arr.some(this.includes)
       })
     },
     checkMode() {
-      return this.$route.params.mode || null
+      return this.$route.params.mode || false
     },
     contactType() {
-      return this.$route.params.mode || null
+      return this.$route.params.type || ''
     }
   },
   methods: {
@@ -118,15 +119,6 @@ export default {
         }
       }
     },
-    async setData() {
-      let users = await server.getData('Users')
-
-      users.forEach(el => {
-        this.users.push(el.data())
-      })
-
-      this.init = true
-    },
     addToMailing(value, type) {
       if (!this.mailingList[type].includes(value)) {
         this.mailingList[type].push(value)
@@ -134,17 +126,27 @@ export default {
     },
     async removeUser(id, index) {
       this.users[index].isFetching = true
-      await server.removeElement(id, null, null, 'Users')
+      await server.removeElement(id, this.users[index].mainImage, this.users[index].images, 'Users')
       this.users.splice(index, 1)
     },
     startMailing() {
-      if (this.mailingList[this.contactType].length) {
-        console.log('mails was sending')
+      if (this.mailingList[this.contactType] && this.mailingList[this.contactType].length) {
+        let message = this.$route.params.messageText
+
+        if (message) {
+          this.mailingList[this.contactType].forEach(el => {
+            console.log(
+                el, ' => ', message
+            )
+          })
+        }
       }
-    }
+      alert('success')
+      this.$router.push({name: 'mailing'})
+    },
   },
-  mounted() {
-    this.setData()
+  async mounted() {
+
   }
 }
 </script>

@@ -79,8 +79,6 @@ export default {
       }
 
       this.cinemas.splice(index, 1)
-
-      console.log('rer', index)
     },
     async setData() {
       let [seo, cinemas] = await server.getData()

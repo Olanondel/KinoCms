@@ -83,6 +83,7 @@ export default {
       mainImageFile: null,
       images: ['', '', '', '', ''],
       imagesFiles: [],
+      notDelete: false,
       id: '',
       init: false,
       isFetching: false,
@@ -144,10 +145,14 @@ export default {
       this.date = date
     },
     async getData() {
-      let data = await server.getCurrentData(this.$route.params.id, 'Pages')
+      if (this.$route.params.id !== 'addPage') {
+        let data = await server.getCurrentData(this.$route.params.id, 'Pages')
 
-      for (let [key, value] of Object.entries(data)) {
-        this[key] = value
+        for (let [key, value] of Object.entries(data)) {
+          this[key] = value
+        }
+      } else {
+        this.init = true
       }
     },
     async save() {
@@ -166,8 +171,9 @@ export default {
         description: this.description,
         mainImage: this.mainImage,
         images: this.images,
-        id: this.id,
-        notDelete: true,
+        id: await server.getId(this.id, 'Pages'),
+        to: 'general',
+        notDelete: this.notDelete,
         init: true,
         isFetching: false,
         seo: this.seo,

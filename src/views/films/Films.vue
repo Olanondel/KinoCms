@@ -1,35 +1,35 @@
 <template>
-<Preloader v-if="!init" />
-  <section class="films" v-else >
+  <Preloader v-if="!init"/>
+  <section class="films" v-else>
     <div class="currentListWrapper">
       <h2 class="title">Список фильмов текущих</h2>
       <section class="currentList">
         <FilmCard
-          v-for="(film, index) in currentFilms"
-          :key="film.title"
-          :index="index"
-          :title="currentFilms[index].name"
-          :image="currentFilms[index].mainImage"
-          :id="currentFilms[index].id"
-          from="CurrentFilms"
+            v-for="(film, index) in currentFilms"
+            :key="film.title"
+            :index="index"
+            :title="currentFilms[index].name"
+            :image="currentFilms[index].mainImage"
+            :id="currentFilms[index].id"
+            from="currentFilms"
         />
       </section>
       <div class="add-film">
         <router-link to="films/addToCurrent" class="btn btn-primary btn-lg">Добавить фильм</router-link>
       </div>
     </div>
-    
+
     <div class="futureListWrapper">
       <h2 class="title">Список фильмов которые покажут скоро</h2>
       <section class="futureList">
         <FilmCard
-          v-for="(film, index) in futureFilms"
-          :key="film.title"
-          :index="index"
-          :title="futureFilms[index].name"
-          :image="futureFilms[index].mainImage"
-          :id="futureFilms[index].id"
-          from="FutureFilms"
+            v-for="(film, index) in futureFilms"
+            :key="film.title"
+            :index="index"
+            :title="futureFilms[index].name"
+            :image="futureFilms[index].mainImage"
+            :id="futureFilms[index].id"
+            from="futureFilms"
         />
       </section>
       <div class="add-film">
@@ -43,8 +43,10 @@
 import db from '../../firebase/firebaseInit'
 import FilmCard from "../../components/films/FilmCard.vue";
 import Preloader from '../../components/general/Preloader.vue';
+import {mapGetters} from 'vuex'
+
 export default {
-  components: { FilmCard, Preloader,  },
+  components: {FilmCard, Preloader,},
   name: "films",
   data() {
     return {
@@ -55,17 +57,35 @@ export default {
   },
   methods: {
     async getCurrentFilms() {
-      let films = await db.collection('CurrentFilms').get()
-      films.docs.forEach(doc => this.currentFilms.push(doc.data()))
+      let data = await db.collection('Films').doc('currentFilms')
+          .collection(this.currentLang).get()
+
+      this.currentFilms = []
+
+      if (data.docs.length) {
+        data.docs.forEach(el => this.currentFilms.push(el.data()))
+      }
     },
     async getFutureFilms() {
-      let films = await db.collection('FutureFilms').get()
-      films.docs.forEach(doc => this.futureFilms.push(doc.data()))
+      let data = await db.collection('Films').doc('futureFilms')
+          .collection(this.currentLang).get()
+
+      this.futureFilms = []
+
+      if (data.docs.length) {
+        data.docs.forEach(el => this.futureFilms.push(el.data()))
+      }
     },
     async initialize() {
-    await this.getCurrentFilms()
-    await this.getFutureFilms()
-    this.init = true
+      await this.getCurrentFilms()
+      await this.getFutureFilms()
+      this.init = true
+    }
+  },
+  computed: mapGetters(['currentLang']),
+  watch: {
+    async currentLang() {
+      await this.initialize()
     }
   },
   created() {

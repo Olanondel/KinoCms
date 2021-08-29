@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex" v-if="!isAuth">
         <div class="image">
           <img
             :src="require('../../public/dist/img/user2-160x160.jpg')"
@@ -12,7 +12,7 @@
           />
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          Олег Паршегуба
         </div>
       </div>
 
@@ -38,8 +38,6 @@
         >
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-
-          <NavItem to="statistic" text="Статистика" icon="fa-chart-pie" />
           <NavItem to="banners" text="Баннера/Слайдеры" icon="fa-images" />
           <NavItem to="films" text="Фильмы" icon="fa-film" />
           <NavItem to="cinemas" text="Кинотеатры" icon="fa-photo-video" />
@@ -58,9 +56,17 @@
 
 <script>
 import NavItem from "@/components/navigation/NavItem.vue";
+import {mapGetters} from "vuex";
 export default {
   components: { NavItem },
+  computed: mapGetters(['isAuth'])
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.register {
+  justify-content: center;
+}
+
+</style>

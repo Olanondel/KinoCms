@@ -1,11 +1,11 @@
 <template>
   <div class="slide-edit">
 
-    <a @click="removeSlide" class="slide-edit__close"
+    <a @click="removeSlide" v-if="index" class="slide-edit__close"
       ><i class="far fa-times-circle"></i
     ></a>
 
-    <img :src="slideImage" alt="" class="slide-edit__image" />
+    <img :src="slideImage || require('@/assets/image/empty.jpg')" alt="" class="slide-edit__image" />
     
 
     <input

@@ -2,23 +2,23 @@
   <div class="top-slider">
     <h2 class="top-slider__title banners-title">
       На главной верх
-      <Switcher class="banners-switcher" @stateChanged="showToggle" />
+      <Switcher class="banners-switcher" @stateChanged="showToggle"/>
     </h2>
     <div class="top-slider__content top-content" v-show="showTopSliderConfig">
       <div class="top-slider__text top-text">Размер: 1000х190</div>
       <div class="top-slider__top">
         <div class="top-slider__slides">
           <SlideEdit
-            @removeSlide="removeSlide"
-            @editUrl="editUrl"
-            @editText="editText"
-            @changeImage="changeImage"
-            v-for="(slide, index) in slides"
-            :index="index"
-            :slideUrl="slide.url"
-            :slideText="slide.text"
-            :key="slide.id"
-            :slideImage="slide.image"
+              @removeSlide="removeSlide"
+              @editUrl="editUrl"
+              @editText="editText"
+              @changeImage="changeImage"
+              v-for="(slide, index) in slides"
+              :index="index"
+              :slideUrl="slide.url"
+              :slideText="slide.text"
+              :key="slide.id"
+              :slideImage="slide.image"
           />
         </div>
 
@@ -34,12 +34,12 @@
           <div class="form-group">
             <label>Скорость вращения</label>
             <select
-              class="form-control select2bs4 select2-hidden-accessible"
-              style="width: 100%"
-              data-select2-id="17"
-              tabindex="-1"
-              aria-hidden="true"
-              v-model="sliderSpeed"
+                class="form-control select2bs4 select2-hidden-accessible"
+                style="width: 100%"
+                data-select2-id="17"
+                tabindex="-1"
+                aria-hidden="true"
+                v-model="sliderSpeed"
             >
               <option selected data-select2-id="19">2</option>
               <option data-select2-id="81">4</option>
@@ -49,9 +49,9 @@
         </div>
 
         <button
-          @click="saveSliderSettings"
-          class="btn bg-gradient-success save-btn"
-          :disabled="isFetching"
+            @click="saveSliderSettings"
+            class="btn bg-gradient-success save-btn"
+            :disabled="isFetching"
         >
           Сохранить
         </button>
@@ -66,6 +66,7 @@ import Switcher from "@/components/general/Switcher.vue";
 import db from "@/firebase/firebaseInit";
 import firebase from "firebase";
 import "firebase/firestore";
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
@@ -77,7 +78,7 @@ export default {
       slides: [],
       slideImageFiles: [],
       sliderSpeed: 2,
-      showTopSliderConfig: null,
+      showTopSliderConfig: true,
       isFetching: false,
       isInit: false,
     };
@@ -100,18 +101,22 @@ export default {
     },
 
     async setImageRef(slide) {
-        const storageRef = firebase.storage().ref();
+      const storageRef = firebase.storage().ref();
 
-        let ref = storageRef.child(
-          `Banners&Sliders/TopSlider/${"slide" + slide}`
-        );
+      let ref = storageRef.child(
+          `Banners&Sliders/TopSlider/${this.currentLang}/slide${slide}.jpg`
+      );
 
-        await ref.put(this.slideImageFiles[slide])
-        let link = await ref.getDownloadURL()
+      await ref.put(this.slideImageFiles[slide])
+      let link = await ref.getDownloadURL()
+
+      if (link) {
         this.slides[slide].image = link
+      }
     },
 
     async saveSliderSettings() {
+
       this.isFetching = true
 
       await Promise.all(this.slides.map(async (slide, index) => {
@@ -123,9 +128,9 @@ export default {
 
       this.slides.imagesFiles = []
 
-      const topSliderConfig = db.collection("topSliderConfig").doc("topSliderConfig");
+      const topSlider = db.collection("Banners&Sliders").doc("topSlider").collection('lang').doc(this.currentLang)
 
-      await topSliderConfig.set({
+      await topSlider.set({
         slidesConfig: this.slides,
         speed: this.sliderSpeed,
       });
@@ -134,10 +139,21 @@ export default {
     },
 
     async getTopSliderConfig() {
-      const slides = await db.collection("topSliderConfig").get();
-      const data = slides.docs[0].data();
-      this.slides = data.slidesConfig;
-      this.sliderSpeed = data.speed;
+      console.log('get new')
+      const slides = await db.collection("Banners&Sliders").doc("topSlider").collection('lang').doc(this.currentLang).get();
+
+      let data = slides.data()
+
+
+      if (data) {
+        this.slides = data.slidesConfig;
+        this.sliderSpeed = data.speed;
+      } else {
+        this.slides = [];
+        this.sliderSpeed = 2;
+      }
+
+
       this.isInit = true
     },
     editUrl(index, value) {
@@ -145,7 +161,6 @@ export default {
     },
     editText(index, value) {
       this.slides[index].text = value;
-      console.log(index);
     },
     changeImage(index, file) {
       let reader = new FileReader();
@@ -158,6 +173,12 @@ export default {
 
       reader.readAsDataURL(file);
     },
+  },
+  computed: mapGetters(['currentLang']),
+  watch: {
+    currentLang() {
+      this.getTopSliderConfig()
+    }
   },
   created() {
     this.getTopSliderConfig();

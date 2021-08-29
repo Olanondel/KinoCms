@@ -46,7 +46,7 @@ export default {
       if (id) {
         this.pages[index].isFetching = true
         try {
-          await server.removeElement(id, null, null, 'Pages')
+          await server.removeElement(id, this.pages[index].mainImage, this.pages[index].images, 'Pages')
           this.pages.splice(index, 1)
           this.isFetching = false
         } catch (err) {

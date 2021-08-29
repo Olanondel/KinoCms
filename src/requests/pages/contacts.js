@@ -13,7 +13,7 @@ export default {
     let ref = db.collection('Pages').doc('contacts')
 
     await ref.collection('seo').doc('seo').set(seo)
-    await ref.set({date: date, title: 'Контакты', stateText: 'ВКЛ', notDelete: true, id: 'contacts'})
+    await ref.set({date: date, title: 'Контакты', stateText: 'ВКЛ', notDelete: true, id: 'contacts', to: 'contacts'})
 
     await Promise.all(cinemas.map(async el => {
       let id

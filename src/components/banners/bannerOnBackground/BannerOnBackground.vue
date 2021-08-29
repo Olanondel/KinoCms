@@ -21,14 +21,14 @@
 
         <div class="banner-tabs-content">
           <div class="tab-1" v-show="currentTabs === 1">
-            <img :src="photoOnBackground" class="tab-1__image" alt="tab_image">
+            <img :src="photoOnBackground || require('@/assets/image/empty.jpg')" class="tab-1__image" alt="tab_image">
             <input type="file" style="display: none" id="photoOnBackground" @change="addPhotoOnBackground">
             <label v-if="!isFetching" for="photoOnBackground" class="btn btn-primary">Добавить</label>
             <label v-else class="btn btn-primary disabled">Добавить</label>
             <button v-if="!isFetching" @click="removePhotoOnBackground" class="btn btn-danger">Удалить</button>
             <button v-else class="btn btn-danger disabled">Удалить</button>
           </div>
-          <div class="tab-2" v-show="currentTabs === 2">2</div>
+          <div class="tab-2" v-show="currentTabs === 2">Просто фон</div>
         </div>
 
       </div>
@@ -40,6 +40,8 @@
 
 <script>
 import firebase from 'firebase'
+import {mapGetters} from 'vuex'
+import db from '../../../firebase/firebaseInit'
 
 export default {
   data() {
@@ -58,22 +60,62 @@ export default {
 
       let file = fileInput.files[0]
 
-      let ref = storageRef.child(`Banners&Sliders/BannerOnBackground/bannerOnBackground.jpg`)
+      let ref = storageRef.child(`Banners&Sliders/BannerOnBackground/${this.currentLang}/bannerOnBackground.jpg`)
 
       await ref.put(file)
       let link = await ref.getDownloadURL()
       this.photoOnBackground = link
+
+      await this.saveToDb()
+
       this.isFetching = false
     },
-    removePhotoOnBackground() {
-      this.photoOnBackground = '../../../assets/image/empty.jpg'
+    async saveToDb() {
+      let ref = await db.collection('Banners&Sliders')
+          .doc('BannerOnBackground')
+          .collection('lang')
+          .doc(this.currentLang)
+
+      ref.set({
+        photoOnBackground: this.photoOnBackground
+      })
+    },
+    async removePhotoOnBackground() {
+      this.isFetching = true
+
+      let ref = await db.collection('Banners&Sliders')
+          .doc('BannerOnBackground')
+          .collection('lang')
+          .doc(this.currentLang)
+
+      await ref.set({
+        photoOnBackground: ''
+      })
+
+      this.photoOnBackground = ''
+
+      this.isFetching = false
     },
     async getBannerOnBackgroundData() {
-      const storageRef = firebase.storage().ref();
-      let ref = storageRef.child(`Banners&Sliders/BannerOnBackground/bannerOnBackground.jpg`)
+      let ref = await db.collection('Banners&Sliders')
+          .doc('BannerOnBackground')
+          .collection('lang')
+          .doc(this.currentLang)
 
-      let link = await ref.getDownloadURL()
-      this.photoOnBackground = link
+      let data = await ref.get()
+
+      if (data.data().photoOnBackground) {
+        this.photoOnBackground = data.data().photoOnBackground
+      } else {
+        this.photoOnBackground = ''
+      }
+
+    }
+  },
+  computed: mapGetters(['currentLang']),
+  watch: {
+    currentLang() {
+      this.getBannerOnBackgroundData()
     }
   },
   created() {

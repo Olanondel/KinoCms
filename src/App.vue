@@ -50,7 +50,15 @@ export default {
   methods: {
     closeModal() {
       this.modal = false
+    },
+    async getUsers() {
+      await this.$store.dispatch('getUsers')
+
+      this.init = true
     }
+  },
+  async mounted() {
+    await this.getUsers()
   }
 };
 </script>

@@ -1,44 +1,44 @@
 <template>
   <div class="slide-edit">
 
-    <a @click="removeSlide" class="slide-edit__close"
-      ><i class="far fa-times-circle"></i
+    <a @click="removeSlide" v-if="index" class="slide-edit__close"
+    ><i class="far fa-times-circle"></i
     ></a>
 
-    <img :src="slideImage" alt="" class="slide-edit__image" />
-    
+    <img :src="slideImage" alt="" class="slide-edit__image"/>
+
 
     <input
-      @change="changePreview"
-      type="file"
-      :id="`topSlide` + index"
-      style="display: none"
-      accept="image/*"
+        @change="changePreview"
+        type="file"
+        :id="`topSlide` + index"
+        style="display: none"
+        accept="image/*"
     />
     <label
-      :for="`topSlide` + index"
-      class="slide-edit__button btn btn-block btn-primary btn-sm"
+        :for="`topSlide` + index"
+        class="slide-edit__button btn btn-block btn-primary btn-sm"
     >
       Добавить
     </label>
 
     <div class="form-group">
       <input
-        type="text"
-        class="form-control"
-        placeholder="Enter URL"
-        v-model="url"
-        @input="editUrl"
+          type="text"
+          class="form-control"
+          placeholder="Enter URL"
+          v-model="url"
+          @input="editUrl"
       />
     </div>
 
     <div class="form-group">
       <input
-        type="text"
-        class="form-control"
-        placeholder="Enter Text"
-        v-model="text"
-        @input="editText"
+          type="text"
+          class="form-control"
+          placeholder="Enter Text"
+          v-model="text"
+          @input="editText"
       />
     </div>
 
@@ -85,10 +85,8 @@ export default {
     }
 
   },
-  computed: {
-  },
-  watch: {
-  }
+  computed: {},
+  watch: {}
 };
 </script>
 

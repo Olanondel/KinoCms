@@ -47,7 +47,7 @@ export default {
   saveToDb(data, folder, doc) {
     let id
 
-    if (doc) {
+    if (doc && doc !== 'addPage') {
       id = doc
     } else { id = data.id }
 

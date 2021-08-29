@@ -1,11 +1,10 @@
 <template>
   <Preloader v-if="!init"/>
   <div class="film-edit" v-else>
-    <Language @changeLang='changeLang' :currentLang="currentLang" />
 
     <div class="film-edit__content">
-      <InputWithText :text="lang.title" v-model="name" />
-      <TextAreaWithText :text="lang.description" v-model="description" />
+      <InputWithText :text="lang.title" v-model="name"/>
+      <TextAreaWithText :text="lang.description" v-model="description"/>
 
       <ImageWithTwoButton
           :text="lang.mainImage"
@@ -21,7 +20,7 @@
           :text="lang.size"
           :btnText="lang.imageRowText"
       />
-      <YoutubeLink :link="trailer" v-model="trailer" :text="lang.trailer" />
+      <YoutubeLink :link="trailer" v-model="trailer" :text="lang.trailer"/>
       <FilmType
           @change="changeTypes"
           :value="types"
@@ -37,7 +36,7 @@
       />
 
       <SaveButtonWithRestore
-          @restore="clearData"
+          @restore="restore"
           @save="savePageData"
           :disabled="isRequesting"
           :saveText="lang.save"
@@ -52,7 +51,6 @@ import db from "../../firebase/firebaseInit";
 import ImagesRow from "@/components/general/imagesRow/ImagesRow.vue";
 import ImageWithTwoButton from "../../components/general/ImageWithTwoButton.vue";
 import InputWithText from "../../components/general/InputWithText.vue";
-import Language from "../../components/general/Language.vue";
 import TextAreaWithText from "../../components/general/TextAreaWithText.vue";
 import YoutubeLink from "../../components/general/YoutubeLink.vue";
 import Seo from "../../components/general/Seo.vue";
@@ -60,11 +58,11 @@ import SaveButtonWithRestore from "../../components/general/SaveButtonWithRestor
 import FilmType from "../../components/films/FilmType.vue";
 import firebase from "firebase";
 import Preloader from "../../components/general/Preloader.vue";
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
     InputWithText,
-    Language,
     TextAreaWithText,
     ImageWithTwoButton,
     ImagesRow,
@@ -88,36 +86,25 @@ export default {
       seo: {url: "", title: "", keywords: "", description: ""},
       isRequesting: false,
       init: false,
-      currentLang: '',
       langData: null,
       lang: null,
+      from: '',
       error: ''
     };
   },
   methods: {
-    changeLang(value) {
-      this.currentLang = value
-
+    changeLang() {
       this.getLang()
     },
     async getLang() {
-      if (!this.langData) {
-        let lang = await db.collection('Language').doc('FilmEditPage').get()
+      let lang = await db.collection('Language').doc('FilmEditPage').get()
 
-        this.langData = lang.data()
-      }
+      let data = lang.data()
 
-      if (!this.currentLang) {
-        let userLang = navigator.language || navigator.userLanguage;
-        this.lang = this.langData[userLang]
-        this.currentLang = userLang
-      } else if (this.currentLang === 'ua') {
-        this.lang = this.langData['ua']
-        this.currentLang = 'ua'
-      } else {
-        this.lang = this.langData['ru']
-        this.currentLang = 'ru'
-      }
+      this.lang = data[this.currentLang]
+
+      this.init = true
+
     },
     removeImage() {
       this.mainImage = "";
@@ -151,21 +138,8 @@ export default {
 
       reader.readAsDataURL(file);
     },
-    clearData() {
-      this.name = "";
-      this.description = "";
-      this.mainImage = "";
-      this.mainImageFile = null;
-      this.mainImageWasEdit = false;
-      this.images = ["", "", "", "", ""];
-      this.imagesFiles = [];
-      this.trailer = "";
-      this.types = [];
-      this.seo.url = "";
-      this.seo.title = "";
-      this.seo.keywords = "";
-      this.seo.description = "";
-      this.isRequesting = false;
+    restore() {
+      this.getPageData()
     },
     async removeFilm() {
       let id = this.$route.params.id;
@@ -173,58 +147,41 @@ export default {
 
       if (id !== 'addToCurrent' && id !== 'addToFuture') {
         await db.collection(from).doc(id).delete()
-        this.$router.push({name: 'films'})
+        await this.$router.push({name: 'films'})
       }
     },
-    async saveMainImage() {
+    async saveMainImage(id, from) {
 
       if (this.mainImageWasEdit) {
-        this.isRequesting = true;
         let storageRef = firebase.storage().ref();
-        let imageRef = storageRef.child("Films/mainImage.jpg");
+        let imageRef = storageRef.child(`Films/${from}/${id}/${this.currentLang}/mainImage.jpg`);
 
-        await imageRef
-            .put(this.mainImageFile)
-            .then(() => imageRef.getDownloadURL())
-            .then(link => {
-              this.mainImage = link;
-              this.mainImageWasEdit = false;
-            });
+        await imageRef.put(this.mainImageFile)
+        this.mainImage = await imageRef.getDownloadURL()
       }
     },
-    async saveImages() {
+    async saveImages(id, from) {
       let storageRef = firebase.storage().ref();
 
       if (this.imagesFiles.length) {
 
-        await this.imagesFiles.forEach(file => {
-          let imageRef = storageRef.child(`Films/RowImage/image-${file.index}.jpg`);
+        await Promise.all(
+            this.imagesFiles.map(async file => {
+              let imageRef = storageRef.child(`Films/${from}/${id}/${this.currentLang}/RowImage/image-${file.index}.jpg`);
 
-          imageRef.put(file.file)
-              .then(() => imageRef.getDownloadURL())
-              .then((link) => {
-                this.images.splice(file.index, 1, link)
-              })
-
-        })
+              await imageRef.put(file.file)
+              this.images.splice(file.index, 1, await imageRef.getDownloadURL())
+            })
+        )
 
       }
     },
-    async saveToDataBase() {
-
-      this.isRequesting = true;
-
-      let id = this.$route.params.id;
-      let from = this.$route.params.from;
-      let doc;
-
-      if (id === "addToCurrent") doc = await db.collection("CurrentFilms").doc();
-      else if (id === "addToFuture") doc = await db.collection("FutureFilms").doc();
-      else doc = await db.collection(from).doc(id);
+    async saveToDataBase(id, from) {
+      let doc = db.collection('Films').doc(from)
+          .collection(this.currentLang).doc(id)
 
       await doc.set({
-        currentLang: this.currentLang,
-        id: doc.id,
+        id: id,
         name: this.name,
         description: this.description,
         mainImage: this.mainImage,
@@ -232,21 +189,37 @@ export default {
         trailer: this.trailer,
         types: this.types,
         seo: this.seo,
+        from: from
       });
 
-      this.isRequesting = false;
-      await this.$router.push({name: "films"});
+      this.$router.push({name: "films"});
     },
     async savePageData() {
-      if (this.name && this.description && this.mainImage) {
-        this.isRequesting = true
-        await this.saveImages()
-        await this.saveMainImage()
-        setTimeout(() => { this.saveToDataBase() }, 1500)
-        this.isRequesting = false
-      } else {
-        await this.removeFilm()
+      this.isRequesting = true
+
+      let id
+      let from = this.$route.params.from
+
+      if (!from && this.$route.params.id === 'addToCurrent') {
+        from = 'currentFilms'
       }
+      if (!from && this.$route.params.id === 'addToFuture') {
+        from = 'futureFilms'
+      }
+
+      if (this.$route.params.id !== 'addToCurrent' && this.$route.params.id !== 'addToFuture') {
+        id = this.$route.params.id
+      } else {
+        let ref = await db.collection('Films').doc(from).collection(this.currentLang).doc()
+        id = ref.id
+      }
+
+      await this.saveImages(id, from)
+      await this.saveMainImage(id, from)
+
+      await this.saveToDataBase(id, from)
+
+      this.isRequesting = false
     },
     editSeoUrl(url) {
       this.seo.url = url
@@ -261,37 +234,53 @@ export default {
       this.seo.description = description
     },
     async getPageData() {
+
+      this.getLang()
+
       if (
           this.$route.params.id !== "addToCurrent" &&
           this.$route.params.id !== "addToFuture"
       ) {
-        let dataLink = db
-            .collection(this.$route.params.from)
+        let from = this.from || this.$route.params.from
+
+        let dataLink = db.collection('Films').doc(from)
+            .collection(this.currentLang)
             .doc(this.$route.params.id);
 
-        let data;
+        let result = await dataLink.get()
+        let data = result.data()
 
-        await dataLink.get().then((d) => (data = d.data()));
-
-        this.name = data.name;
-        this.description = data.description;
-        this.mainImage = data.mainImage;
-        this.images = data.images;
-        this.trailer = data.trailer;
-        this.types = data.types;
-        this.seo.url = data.seo.url;
-        this.seo.title = data.seo.title;
-        this.seo.keywords = data.seo.keywords;
-        this.seo.description = data.seo.description;
-        this.currentLang = data.currentLang
+        if (data) {
+          for (let [key, value] of Object.entries(data)) {
+            this[key] = value
+          }
+        } else {
+          this.name = "",
+              this.description = '',
+              this.mainImage = "",
+              this.mainImageWasEdit = false,
+              this.mainImageFile = null,
+              this.images = ['', '', '', '', ''],
+              this.imagesFiles = [],
+              this.trailer = "",
+              this.types = [],
+              this.seo = {url: "", title: "", keywords: "", description: ""},
+              from = this.from
+        }
       }
-      await this.getLang()
+
       this.init = true;
     }
   },
-  computed: {},
-  async created() {
-    await this.getPageData();
+  computed: mapGetters(['currentLang']),
+  watch: {
+    currentLang() {
+      this.getPageData()
+    }
+  },
+  async mounted() {
+    await this.getLang()
+    await this.getPageData()
   }
 }
 </script>

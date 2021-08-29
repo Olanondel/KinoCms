@@ -17,6 +17,8 @@ import PromotionsEditPage from "../views/promotions/PromotionsEditPage";
 import MainEdit from "../views/pages/pages/Main";
 import GeneralPage from "../views/pages/pages/GeneralPage";
 import Contacts from "../views/pages/pages/Contacts";
+import Register from "../views/Register";
+import Login from "../views/Login";
 
 export const routes = [
   {path: "", name: "statistic", component: Statistic},
@@ -36,6 +38,8 @@ export const routes = [
   {path: "/mailing", name: "mailing", component: Mailing},
   {path: "/films/:id", name: 'filmEdit', component: FilmEditPage},
   {path: "/cinemas", name: "cinemas", component: Cinemas},
+  {path: "/register", name: "register", component: Register},
+  {path: "/login", name: "login", component: Login},
 
   {
     path: "/cinemaConfig/:id", component: CinemaConfig, children: [
