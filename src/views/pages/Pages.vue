@@ -23,6 +23,7 @@ import PlusButton from "../../components/general/PlusButton";
 import NewsTable from "../../components/news/NewsTable";
 import server from '@/requests/requests'
 import Preloader from "../../components/general/Preloader";
+import {mapGetters} from "vuex";
 
 export default {
   components: {Preloader, NewsTable, PlusButton},
@@ -35,18 +36,26 @@ export default {
   },
   methods: {
     async setData() {
-      let data = await server.getData('Pages')
+      let data = await server.getData('Pages', null, this.currentLang)
 
-      data.forEach(el => {
-        this.pages.push(el.data())
-      })
+      this.pages = []
+
+      if (data) {
+        data.forEach(el => {
+          this.pages.push(el.data())
+        })
+      } else {
+        Object.assign(this.$data, this.$options.data.call(this), {lang: this.lang, init: true, id: this.id, to: 'general'})
+      }
+
       this.init = true
     },
     async removeElement(id, index) {
       if (id) {
         this.pages[index].isFetching = true
+
         try {
-          await server.removeElement(id, this.pages[index].mainImage, this.pages[index].images, 'Pages')
+          await server.removeElement(id, this.pages[index].mainImage, this.pages[index].images, 'Pages', this.currentLang)
           this.pages.splice(index, 1)
           this.isFetching = false
         } catch (err) {
@@ -55,6 +64,12 @@ export default {
         }
       }
     },
+  },
+  computed: mapGetters(['currentLang']),
+  watch: {
+    currentLang() {
+      this.setData()
+    }
   },
   mounted() {
     this.setData()

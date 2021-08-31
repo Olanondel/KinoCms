@@ -2,9 +2,11 @@
   <Preloader v-if="!init"/>
 
   <section v-else class="newsEditPage">
-    <Language :currentLang="currentLang" @changeLang="changeLang">
-      <SwitcherWithText v-model="state" :stateText="stateText"/>
-    </Language>
+      <div class="switcher">
+        <SwitcherWithText class="margin" v-model="state" :stateText="stateText"/>
+      </div>
+
+    <hr>
 
     <InputWithText
         :text="lang.title"
@@ -52,7 +54,6 @@
 
 <script>
 import SwitcherWithText from "@/components/general/SwitcherWithText";
-import Language from "@/components/general/Language";
 import InputWithText from "@/components/general/InputWithText";
 import TextAreaWithText from "@/components/general/TextAreaWithText";
 import ImageWithTwoButton from "@/components/general/ImageWithTwoButton";
@@ -70,7 +71,7 @@ export default {
     Preloader,
     ImageRow,
     SaveButton,
-    Seo, ImageWithTwoButton, TextAreaWithText, InputWithText, Language, SwitcherWithText
+    Seo, ImageWithTwoButton, TextAreaWithText, InputWithText, SwitcherWithText
   },
   data() {
     return {
@@ -84,7 +85,7 @@ export default {
       images: ['', '', '', '', ''],
       imagesFiles: [],
       notDelete: false,
-      id: '',
+      id: this.$route.params.id || '',
       init: false,
       isFetching: false,
       to: 'general',
@@ -133,7 +134,7 @@ export default {
 
       this.lang = result.data()
     },
-    getLang() { this.changeLang(this.currentLang) },
+    async getLang() { await this.changeLang(this.currentLang) },
     changeDate(date) {
       this.date = date
     },
@@ -203,6 +204,9 @@ export default {
         this.stateText = 'ВЫКЛ'
         $("[name='my-checkbox']").bootstrapSwitch('state', false)
       }
+    },
+    currentLang() {
+      Promise.all([this.getLang(), this.getData()])
     }
   },
   async mounted() {
@@ -210,8 +214,6 @@ export default {
     await this.getLang()
   },
   computed: mapGetters(['currentLang']),
-  created() {
-  }
 }
 </script>
 
@@ -223,5 +225,15 @@ export default {
 
 .row-wrap > div {
   width: 50%;
+}
+
+.switcher {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.margin {
+  margin: 5px 150px 0 0;
+  align-items: center;
 }
 </style>

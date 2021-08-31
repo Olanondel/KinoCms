@@ -97,11 +97,14 @@ export default {
   async getData(folder, doc, lang) {
     let ref
 
-    if (doc) {
+    if (doc && lang) {
       ref = await db.collection(folder).doc(folder).collection(lang).doc(doc).get()
       return ref.data()
-    } else {
+    } else if (!doc && lang) {
       ref = await db.collection(folder).doc(folder).collection(lang).get()
+      return ref.docs
+    } else {
+      ref = await db.collection(folder).get()
       return ref.docs
     }
   },

@@ -99,7 +99,7 @@
                       <label class="form-check-label"></label>
                     </div>
                     <span class="template-name">
-                      {{ template.name }}
+                      {{ template }}
                     </span>
                     <button class="btn btn-danger btn-xs" @click="removeTemplate(index)">удалить</button>
                   </div>
@@ -151,7 +151,7 @@ export default {
     },
     fileName() {
       if (this.mailTemplates[0]) {
-        return this.mailTemplates[0].name
+        return this.mailTemplates[0]
       }
       return 'Файл не выбран'
     },
@@ -160,19 +160,22 @@ export default {
         return 'Выберите шаблон!'
       }
 
-      return this.mailTemplates[this.currentTemplateIndex].name
+      return this.mailTemplates[this.currentTemplateIndex]
     }
   },
   methods: {
     async changeFile(e) {
-      let index = this.mailTemplates.length
-      await server.uploadHtmlTemplate(e.target.files[0], index)
+      let length = this.mailTemplates.length
 
-      if (this.mailTemplates.length >= 5) {
+      if (length >= 5) {
         this.mailTemplates.splice(4, 1)
       }
 
-      this.mailTemplates.unshift(e.target.files[0])
+      this.mailTemplates.unshift(e.target.files[0].name)
+
+      await server.uploadHtmlTemplate(this.mailTemplates)
+
+
     },
     changeTemplate(e) {
       this.currentTemplateIndex = e.target.value
@@ -200,19 +203,24 @@ export default {
         alert('Only for all user mode!')
       }
     },
-    removeTemplate(index) {
+    async removeTemplate(index) {
       if (this.currentTemplateIndex === index) {
         this.currentTemplateIndex = null
       }
       this.mailTemplates.splice(index, 1)
+
+      await server.uploadHtmlTemplate(this.mailTemplates)
     },
     async getData() {
       let data = await server.getHtmlTemplates()
 
-      this.mailTemplates = data
+      if (data.data()) {
+        this.mailTemplates = data.data().templates
+      }
     }
   },
   mounted() {
+    this.getData()
   }
 }
 </script>

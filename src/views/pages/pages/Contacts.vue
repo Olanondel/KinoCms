@@ -1,13 +1,13 @@
 <template>
-  <Preloader v-if="!init" />
+  <Preloader v-if="!init"/>
 
   <div v-else>
     <CinemaForm
         v-for="(cinema, index) in cinemas"
-        :key="index"
+        :key="cinema.id"
         :index="index"
         @changeImage="changeMainImage"
-        @removeImage="removeMainImage"
+        @removeImage="removeMainImage(index, cinema.id)"
         :cinema="cinema"
 
         @changeTitle="changeTitle"
@@ -43,6 +43,7 @@ import SaveButton from "../../../components/general/SaveButton";
 import PlusButton from "../../../components/general/PlusButton";
 import server from '../../../requests/pages/contacts'
 import Preloader from "../../../components/general/Preloader";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Contacts",
@@ -51,7 +52,7 @@ export default {
     return {
       cinemas: [],
       seo: {url: '', title: '', keywords: '', description: ''},
-      init: false,
+      init: true,
       isFetching: false,
       date: this.getDate(),
       to: 'contacts'
@@ -61,7 +62,7 @@ export default {
     async save() {
       this.isFetching = true
 
-      await server.saveCinemas(this.seo, this.cinemas, this.date)
+      await server.saveCinemas(this.seo, this.cinemas, this.date, this.currentLang)
 
       this.isFetching = false
       await this.$router.push({name: 'pages'})
@@ -72,22 +73,29 @@ export default {
         let id = this.cinemas[index].id
 
         if (this.cinemas[index].logoImage.length && !this.cinemas[index].logoImageFile) {
-          await server.deleteCinemaImage(id)
+          await server.deleteCinemaImage(id, this.currentLang)
         }
 
-        await server.deleteCinemaDb(id)
+        await server.deleteCinemaDb(id, this.currentLang)
       }
 
       this.cinemas.splice(index, 1)
     },
     async setData() {
-      let [seo, cinemas] = await server.getData()
+      let [seo, cinemas] = await server.getData(this.currentLang)
 
-      this.seo = seo.data()
+      if (seo.data()) {
+        this.seo = seo.data()
+      } else {
+        this.seo = {url: '', title: '', keywords: '', description: ''}
+      }
 
-      cinemas.docs.forEach(el => {
-        this.cinemas.push(el.data())
-      })
+      if (cinemas.docs && cinemas.docs.length) {
+
+        this.cinemas = cinemas.docs.map(el => { return el.data() })
+      } else {
+        this.cinemas = []
+      }
 
       this.init = true
     },
@@ -130,9 +138,15 @@ export default {
 
       reader.readAsDataURL(file)
     },
-    removeMainImage(index) {
-      this.cinemas[index].logoImage = ''
-      this.cinemas[index].logoImageFile = null
+    async removeMainImage(index, id) {
+      if (this.cinemas[index].logoImage.length && !this.cinemas[index].logoImageFile) {
+        await server.deleteCinemaImage(id, this.currentLang)
+
+        this.cinemas[index].logoImage = ''
+      } else {
+        this.cinemas[index].logoImage = ''
+        this.cinemas[index].logoImageFile = null
+      }
     },
     editSeoUrl(url) {
       this.seo.url = url
@@ -146,6 +160,12 @@ export default {
     editSeoDescription(description) {
       this.seo.description = description
     },
+  },
+  computed: mapGetters(['currentLang']),
+  watch: {
+    currentLang() {
+      this.setData()
+    }
   },
   mounted() {
     this.setData()

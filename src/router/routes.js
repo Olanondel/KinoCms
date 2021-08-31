@@ -29,7 +29,7 @@ export const routes = [
   {path: "/promotions", name: "promotions", component: Promotions},
   {path: "/promotionEdit/:id", name: "promotionEdit", component: PromotionsEditPage},
   {path: "/pages/", name: "pages", component: Pages},
-  {path: "/pages/MainPage", name: "MainEdit", component: MainEdit},
+  {path: "/pages/mainPage", name: "mainEdit", component: MainEdit},
   {path: "/pages/contacts", name: "contacts", component: Contacts},
   {path: "/pages/:id", name: "general", component: GeneralPage},
   {path: "/mainPage", name: "mainEdit", component: MainEdit},

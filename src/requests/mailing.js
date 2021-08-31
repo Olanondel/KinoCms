@@ -1,16 +1,15 @@
-import firebase from "firebase";
-
-let storage = firebase.storage()
+import db from '../firebase/firebaseInit'
 
 export default {
-  async uploadHtmlTemplate(template, index) {
-    let ref = storage.ref('Mailing/templates/template-' + index + '.html')
+  async uploadHtmlTemplate(templates) {
+    let ref = db.collection('Mailing').doc('templates')
 
-    await ref.put(template)
+    await ref.set({'templates': templates})
   },
   async getHtmlTemplates() {
-    let ref = storage.ref('Mailing/templates')
+    let data = await db.collection('Mailing').doc('templates').get()
 
-    console.log(ref.data())
+    console.log(data)
+    return data
   }
 }

@@ -85,7 +85,7 @@ export default {
       this.$emit('changeImage', file, this.index)
     },
     removeImage() {
-      this.$emit('removeImage', this.index)
+      this.$emit('removeImage')
     }
   },
   watch: {
