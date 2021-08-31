@@ -1,8 +1,11 @@
 <template>
   <section class="newsEditPage">
-    <Language :currentLang="currentLang" @changeLang="changeLang">
-      <SwitcherWithText v-model="state" :stateText="stateText" />
-    </Language>
+
+    <div class="switcher">
+      <SwitcherWithText class="margin " v-model="state" :stateText="stateText" />
+    </div>
+
+    <hr>
 
     <div class="row-wrap">
       <div>
@@ -58,7 +61,6 @@
 
 <script>
 import SwitcherWithText from "../../components/general/SwitcherWithText";
-import Language from "../../components/general/Language";
 import InputWithText from "../../components/general/InputWithText";
 import TextAreaWithText from "../../components/general/TextAreaWithText";
 import ImageWithTwoButton from "../../components/general/ImageWithTwoButton";
@@ -68,18 +70,19 @@ import SaveButton from "../../components/general/SaveButton";
 import server from '@/requests/newsPage'
 import ImageRow from "../../components/general/imagesRow/ImagesRow";
 import DateWithText from "../../components/general/DateWithText";
+import {mapGetters} from 'vuex'
+
 export default {
   name: "NewsEditPage",
   components: {
     DateWithText,
     ImageRow,
     SaveButton,
-    Seo, YoutubeLink, ImageWithTwoButton, TextAreaWithText, InputWithText, Language, SwitcherWithText},
+    Seo, YoutubeLink, ImageWithTwoButton, TextAreaWithText, InputWithText, SwitcherWithText},
   data() {
     return {
       title: '',
       date: '',
-      currentLang: 'ru',
       state: true,
       stateText: 'ВКЛ',
       description: '',
@@ -89,6 +92,7 @@ export default {
       imagesFiles: [],
       youtubeLink: '',
       id: '',
+      to: '',
       init: false,
       isFetching: false,
       seo: {
@@ -130,18 +134,14 @@ export default {
     changeState(state) {
       this.state = state
     },
-    async changeLang(lang) {
-      this.currentLang = lang
+    async changeLang() {
 
       let result = await server.getLang(this.currentLang)
 
       this.lang = result.data()
+      console.log(this.lang)
     },
     getLang() {
-      if (!this.currentLang) {
-        this.currentLang = navigator.language || navigator.userLanguage
-      }
-
       this.changeLang(this.currentLang)
     },
     changeDate(date) {
@@ -154,10 +154,29 @@ export default {
       let id = this.$route.params.id
 
       if (id) {
-        let data = await server.getNewsData(id)
+        let data = await server.getNewsData(id, this.currentLang)
 
-        for (let value in data) {
-          this[value] = data[value]
+        if (data) {
+          for (let value in data) {
+            this[value] = data[value]
+          }
+        } else {
+            this.title = '',
+            this.date = '',
+            this.state = true,
+            this.stateText = 'ВКЛ',
+            this.description = '',
+            this.mainImage = '',
+            this.mainImageFile = null,
+            this.images = ['', '', '', '', ''],
+            this.imagesFiles = [],
+            this.youtubeLink = '',
+            this.id = id,
+            this.to = 'newsEdit',
+            this.isFetching = false,
+            this.seo = {
+              url: '', title: '', keywords: '', description: ''
+            }
         }
       } else {
         this.init = true
@@ -171,7 +190,7 @@ export default {
         this.date = this.getDate()
       }
 
-      await server.save(this.$data)
+      await server.save(this.$data, this.currentLang)
       this.isFetching = false
       this.$router.push({name: 'news'})
     },
@@ -193,8 +212,13 @@ export default {
     state: function () {
       if (this.state) { this.stateText = 'ВКЛ' }
       else { this.stateText = 'ВЫКЛ' }
+    },
+    currentLang() {
+      this.getLang()
+      this.getData()
     }
   },
+  computed: mapGetters(["currentLang"]),
   async mounted() {
     await this.getData()
     await this.getLang()
@@ -210,5 +234,15 @@ export default {
 
 .row-wrap > div {
   width: 50%;
+}
+
+.switcher {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.margin {
+  margin: 5px 150px 0 0;
+  align-items: center;
 }
 </style>

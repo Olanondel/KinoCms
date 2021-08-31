@@ -71,5 +71,10 @@ export default {
 
 .dateWithText {
   display: flex;
+  align-items: center;
+}
+
+.form-group {
+  margin-bottom: 0 !important;
 }
 </style>

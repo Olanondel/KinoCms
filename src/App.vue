@@ -58,7 +58,7 @@ export default {
     }
   },
   async mounted() {
-    await this.getUsers()
+    // await this.getUsers()
   }
 };
 </script>

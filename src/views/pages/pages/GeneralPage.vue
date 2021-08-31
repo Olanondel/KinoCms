@@ -62,6 +62,7 @@ import server from '@/requests/requests'
 import ImageRow from "@/components/general/imagesRow/ImagesRow";
 import db from '@/firebase/firebaseInit.js'
 import Preloader from "@/components/general/Preloader";
+import {mapGetters} from "vuex";
 
 export default {
   name: "GeneralPage",
@@ -75,7 +76,6 @@ export default {
     return {
       title: '',
       date: '',
-      currentLang: 'ru',
       state: null,
       stateText: 'ВЫКЛ',
       description: '',
@@ -87,7 +87,7 @@ export default {
       id: '',
       init: false,
       isFetching: false,
-      to: '',
+      to: 'general',
       seo: {
         url: '', title: '', keywords: '', description: ''
       },
@@ -127,29 +127,26 @@ export default {
     changeState(state) {
       this.state = state
     },
-    async changeLang(lang) {
-      this.currentLang = lang
+    async changeLang() {
 
-      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Pages').collection('aboutCinema').doc(lang))
+      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Pages').collection('aboutCinema').doc(this.currentLang))
 
       this.lang = result.data()
     },
-    getLang() {
-      if (!this.currentLang) {
-        this.currentLang = navigator.language || navigator.userLanguage
-      }
-
-      this.changeLang(this.currentLang)
-    },
+    getLang() { this.changeLang(this.currentLang) },
     changeDate(date) {
       this.date = date
     },
     async getData() {
       if (this.$route.params.id !== 'addPage') {
-        let data = await server.getCurrentData(this.$route.params.id, 'Pages')
+        let data = await server.getCurrentData(this.$route.params.id, 'Pages', this.currentLang)
 
-        for (let [key, value] of Object.entries(data)) {
-          this[key] = value
+        if (data) {
+          for (let [key, value] of Object.entries(data)) {
+            this[key] = value
+          }
+        } else {
+          Object.assign(this.$data, this.$options.data.call(this), {lang: this.lang, init: true, id: this.id, to: 'promotionEdit'})
         }
       } else {
         this.init = true
@@ -165,21 +162,20 @@ export default {
       await server.save({
         title: this.title,
         date: this.getDate(),
-        currentLang: this.currentLang,
         state: this.state,
         stateText: this.stateText,
         description: this.description,
         mainImage: this.mainImage,
         images: this.images,
-        id: await server.getId(this.id, 'Pages'),
+        id: await server.getId(this.id, 'Pages', this.currentLang),
         to: 'general',
         notDelete: this.notDelete,
         init: true,
         isFetching: false,
         seo: this.seo,
-      }, 'Pages', this.mainImageFile, this.images, this.imagesFiles, this.$route.params.id)
+      }, 'Pages', this.mainImageFile, this.images, this.imagesFiles, this.$route.params.id, this.currentLang)
       this.isFetching = false
-      await this.$router.push({name: 'pages'})
+      this.$router.push({name: 'pages'})
     },
     removeMainImage() {
       this.mainImage = ''
@@ -213,6 +209,7 @@ export default {
     await this.getData()
     await this.getLang()
   },
+  computed: mapGetters(['currentLang']),
   created() {
   }
 }

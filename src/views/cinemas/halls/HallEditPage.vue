@@ -1,8 +1,5 @@
 <template>
   <div class="hall-edit-page">
-
-    <Language @changeLang='changeLang' :currentLang="hallsCurrentLang" />
-
     <InputWithText :text="hallLang.hallNumber" v-model="hallNumber" />
 
     <TextAreaWithText :text="hallLang.description" v-model="description" />
@@ -46,17 +43,17 @@
 </template>
 
 <script>
-import Language from "../../../components/general/Language";
 import InputWithText from "../../../components/general/InputWithText";
 import TextAreaWithText from "../../../components/general/TextAreaWithText";
 import ImageWithTwoButton from "../../../components/general/ImageWithTwoButton";
 import ImageRow from "../../../components/general/imagesRow/ImagesRow";
 import Seo from "../../../components/general/Seo";
 import SaveButton from "../../../components/general/SaveButton";
+import {mapGetters} from 'vuex'
 
 export default {
   name: "HallEditPage",
-  components: {SaveButton, Seo, ImageRow, ImageWithTwoButton, TextAreaWithText, InputWithText, Language},
+  components: {SaveButton, Seo, ImageRow, ImageWithTwoButton, TextAreaWithText, InputWithText},
   props: {
     halls: {
       type: Array
@@ -77,7 +74,7 @@ export default {
       isFetching: false,
       seo: {url: '', title: '', keywords: '', description: '',},
       date: '',
-      currentLang: ''
+      id: this.$route.params.id || ''
     }
   },
   methods: {
@@ -146,9 +143,9 @@ export default {
             topBannerImageFile: this.topBannerImageFile,
             images: this.images,
             imagesFiles: this.imagesFiles,
-            currentLang: this.currentLang,
             seo: this.seo,
-            date: this.getDate()
+            date: this.getDate(),
+            id: this.id === 'addCinema' ? '' : this.id
           })
 
           this.$router.go(-1)
@@ -175,6 +172,12 @@ export default {
           this[key] = value
         }
       }
+    }
+  },
+  computed: mapGetters(["currentLang"]),
+  watch: {
+    currentLang() {
+      this.$router.go(-1)
     }
   },
   async created() {

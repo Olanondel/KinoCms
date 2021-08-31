@@ -24,6 +24,7 @@ import PlusButton from "../../components/general/PlusButton";
 import NewsTable from "../../components/news/NewsTable";
 import server from '@/requests/requests'
 import Preloader from "../../components/general/Preloader";
+import {mapGetters} from "vuex";
 
 export default {
   components: {Preloader, NewsTable, PlusButton},
@@ -36,23 +37,40 @@ export default {
   },
   methods: {
     async setData() {
-      let data = await server.getData('Promotions')
 
-      data.forEach(el => {
-        this.promotions.push(el.data())
-      })
+      console.log('lang', this.currentLang)
+
+      let data = await server.getData('Promotions', null, this.currentLang)
+
+      this.promotions = []
+
+      if (data) {
+        data.forEach(el => {
+          this.promotions.push(el.data())
+        })
+      } else {
+        Object.assign(this.$data,this.$options.data.call(this))
+      }
 
       this.init = true
     },
     async removePromotion(id, index) {
       if (id) {
         this.promotions[index].isFetching = true
-          await server.removeElement(id, this.promotions[index].mainImage, this.promotions[index].images, 'Promotions')
+
+          await server.removeElement(id, this.promotions[index].mainImage, this.promotions[index].images, 'Promotions', this.currentLang)
+
           this.promotions.splice(index, 1)
           this.isFetching = false
       }
     },
   },
+  watch: {
+    currentLang() {
+      this.setData()
+    }
+  },
+  computed: mapGetters(['currentLang']),
   mounted() {
     this.setData()
   }

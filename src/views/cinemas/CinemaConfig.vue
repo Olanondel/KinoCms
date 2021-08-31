@@ -4,7 +4,6 @@
 
         :cinema="cinema"
         :cinemaLang="cinemaLang"
-        @changeCinemaLang="changeCinemaLang"
         @changeLogotypeImage="changeLogotypeImage"
         @changeTopBannerImage="changeTopBannerImage"
         @changeImages="changeImages"
@@ -26,7 +25,6 @@
         :halls="halls"
         :hallsCurrentLang="hallsCurrentLang"
         @saveHall="saveHall"
-        @changeHallLang="changeHallLang"
         @getLang="getHallLang"
     />
   </div>
@@ -35,6 +33,7 @@
 <script>
 import db from '@/firebase/firebaseInit'
 import firebase from "firebase";
+import {mapGetters} from 'vuex'
 
 export default {
   name: "editPage",
@@ -74,10 +73,6 @@ export default {
     }
   },
   methods: {
-    changeCinemaLang(lang) {
-      this.cinema.currentLang = lang
-      this.getCinemaLang()
-    },
     editSeoUrl(url) {
       this.cinema.seo.url = url
     },
@@ -149,112 +144,128 @@ export default {
         this.halls.push(data)
       }
     },
-    changeHallLang(lang) {
-      this.hallsCurrentLang = lang
-
-      this.getHallLang()
-    },
     removeHall(index) {
-      if (this.halls[index].id) { this.hallsNeedRemove.push(this.halls[index].id) }
+      if (this.halls[index].id) {
+        this.hallsNeedRemove.push(this.halls[index].id)
+      }
 
       this.halls.splice(index, 1)
     },
-    getData() {
+
+
+    async getData() {
+      this.isNew()
+
+      await this.getCinemas()
+      await this.getHalls()
+
+      this.cinema.isInit = true
+    },
+    async getCinemas() {
+      let ref = db.collection('Cinemas').doc('data').collection('editPage').doc(this.currentLang).collection(this.currentLang).doc(this.getId())
+
+      let res = await ref.get()
+      let cinemas = res.data()
+
+      if (cinemas) {
+        for (let [key, value] of Object.entries(cinemas)) {
+          this.cinema[key] = value
+        }
+      } else {
+        this.cinema = {
+          title: '',
+          description: '',
+          conditions: '',
+          logotypeImage: '',
+          logotypeImageFile: null,
+          topBannerImage: '',
+          topBannerImageFile: null,
+          images: ['', '', '', '', ''],
+          imagesFiles: [],
+          seo: {
+            url: '',
+            title: '',
+            keywords: '',
+            description: ''
+          },
+          id: this.id,
+
+          currentLang: '',
+          isInit: false,
+          isFetching: false,
+        }
+      }
+    },
+    async getHalls() {
+      let ref = db.collection('Cinemas').doc('data').collection('halls').doc(this.getId()).collection(this.currentLang)
+
+      let res = await ref.get()
+      let halls = res.docs
+
+      this.halls = []
+
+      if (halls && halls.length) {
+        this.halls = halls.map(el => {
+          return {...el.data(), id: el.id}
+        })
+      }
+    },
+    isNew() {
       if (this.$route.params.id === 'addCinema') {
         this.cinema.isInit = true
-      }
-
-      if (this.$route.params.id !== 'addCinema') {
-
-        let ref = db.collection('Cinemas').doc('data')
-
-        let cinema = ref.collection('editPage').doc(this.getId())
-
-        let cinemaHalls = ref.collection('halls').doc(this.getId()).collection('halls')
-
-
-        cinema.get()
-            .then(doc => {
-              let data = doc.data()
-
-              if (data) {
-                for (let [key, value] of Object.entries(data)) {
-                  this.cinema[key] = value
-                }
-              }
-            })
-
-        cinemaHalls.get()
-            .then(doc => {
-              let data = doc.docs.map(el => {
-                return {...el.data(), id: el.id}
-              })
-
-              this.halls = data
-            })
-
+        return
       }
     },
-    getCinemaLang() {
-      if (!this.cinema.currentLang) {
-        this.cinema.currentLang = navigator.language || navigator.userLanguage
-      }
-
+    async getCinemaLang() {
       let ref = db.collection('Language').doc('Cinema')
-          .collection('editPage').doc(this.cinema.currentLang)
+          .collection('editPage').doc(this.currentLang)
 
-      ref.get()
-          .then(doc => {
-            this.cinemaLang = doc.data()
-          })
+      let doc = await ref.get()
+
+      this.cinemaLang = doc.data()
     },
-    uploadLogotypeImage() {
+    async uploadLogotypeImage(id) {
       if (this.cinema.logotypeImageFile) {
         let storageRef = firebase.storage().ref()
-        let imageRef = storageRef.child(`Cinemas/Logotype.jpg`);
+        let imageRef = storageRef.child(`Cinemas/Cinemas/${id}/${this.currentLang}/Logotype.jpg`);
 
-        imageRef
-            .put(this.cinema.logotypeImageFile)
-            .then(() => imageRef.getDownloadURL())
-            .then(link => this.cinema.logotypeImage = link)
+        await imageRef.put(this.cinema.logotypeImageFile)
+        this.cinema.logotypeImage = await imageRef.getDownloadURL()
 
         this.cinema.logotypeImageFile = null
       }
     },
-    uploadTopBannerImage() {
+    async uploadTopBannerImage(id) {
       if (this.cinema.topBannerImageFile) {
         let storageRef = firebase.storage().ref()
-        let imageRef = storageRef.child(`Cinemas/TopBanner.jpg`);
+        let imageRef = storageRef.child(`Cinemas/Cinemas/${id}/${this.currentLang}/TopBanner.jpg`);
 
-        imageRef
-            .put(this.cinema.topBannerImageFile)
-            .then(() => imageRef.getDownloadURL())
-            .then(link => this.cinema.topBannerImage = link)
+        await imageRef.put(this.cinema.topBannerImageFile)
+        this.cinema.topBannerImage = await imageRef.getDownloadURL()
 
         this.cinema.topBannerImageFile = null
       }
     },
-    uploadImages() {
+    async uploadImages(id) {
       let storageRef = firebase.storage().ref()
 
       if (this.cinema.imagesFiles.length) {
-        this.cinema.imagesFiles.forEach((el) => {
-          let imageRef = storageRef.child(`Cinemas/RowImages/image-${el.index}.jpg`);
 
-          imageRef
-              .put(el.file)
-              .then(() => imageRef.getDownloadURL())
-              .then(link => this.cinema.images.splice(el.index, 1, link))
-        })
+        await Promise.all([this.cinema.imagesFiles.map(async el => {
+          let imageRef = storageRef.child(`Cinemas/Cinemas/${id}/${this.currentLang}/RowImages/image-${el.index}.jpg`)
+
+          await imageRef.put(el.file)
+          this.cinema.images.splice(el.index, 1, await imageRef.getDownloadURL())
+        })])
+
 
         this.cinema.imagesFiles = []
       }
     },
-    saveToDatabase() {
-      let editPage = db.collection('Cinemas').doc('data')
-          .collection('editPage')
+    saveToDatabase(id) {
 
-      let id = this.getId()
+      let editPage = db.collection('Cinemas').doc('data')
+          .collection('editPage').doc(this.currentLang).collection(this.currentLang)
 
       editPage.doc(id).set({
         title: this.cinema.title,
@@ -271,27 +282,32 @@ export default {
       })
     },
     async saveCinema() {
-      this.cinema.isFetching = true
-      await this.saveHalls()
+      let id = this.id || this.getId()
 
-      await this.facadeUploadImages()
-      await this.saveToDatabase()
+      if (id !== 'id') {
+        this.cinema.isFetching = true
+        await this.saveHalls(id)
 
-      this.cinema.isFetching = false
-      await this.$router.push({name: 'cinemas'})
+        await this.facadeUploadImages(id)
+        await this.saveToDatabase(id)
+
+        this.cinema.isFetching = false
+
+        this.$router.push({name: 'cinemas'})
+      }
     },
-    getHallLang() {
+    async getHallLang() {
       if (!this.hallsCurrentLang) {
         this.hallsCurrentLang = navigator.language || navigator.userLanguage
       }
 
       let ref = db.collection('Language').doc('Cinema')
-          .collection('hallEdit').doc(this.hallsCurrentLang)
+          .collection('hallEdit').doc(this.currentLang)
 
-      ref.get()
-          .then(doc => {
-            this.hallLang = doc.data()
-          })
+      let doc = await ref.get()
+
+      this.hallLang = doc.data()
+
     },
     async uploadHallImages(hall, index) {
       let globIndex = index
@@ -299,57 +315,56 @@ export default {
 
       if (hall.imagesFiles && hall.imagesFiles.length) {
 
-        hall.imagesFiles.forEach((el, index) => {
-          let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/RowImages/image-${index}.jpg`);
+        await Promise.all(hall.imagesFiles.map(async el => {
+          let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/${this.currentLang}/${hall.id}/RowImages/image-${el.index}.jpg`);
 
-          imageRef
-              .put(el.file)
-              .then(() => imageRef.getDownloadURL())
-              .then(link => this.halls[globIndex].images.splice(el.index, 1, link))
-        })
+          await imageRef.put(el.file)
+          this.halls[globIndex].images.splice(el.index, 1, await imageRef.getDownloadURL())
+        }))
 
         this.cinema.imagesFiles = []
-
       }
     },
     async uploadSchemeHallImage(hall, index) {
+      console.log(hall.id)
       if (hall.hallSchemeImageFile) {
         let storageRef = firebase.storage().ref()
-        let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/schemeImage.jpg`);
+        let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/${this.currentLang}/${hall.id}/schemeImage.jpg`);
 
-        imageRef
-            .put(hall.hallSchemeImageFile)
-            .then(() => imageRef.getDownloadURL())
-            .then(link => this.halls[index].hallSchemeImage = link)
+        await imageRef.put(hall.hallSchemeImageFile)
+        this.halls[index].hallSchemeImage = await imageRef.getDownloadURL()
 
         this.halls[index].hallSchemeImageFile = null
       }
-    },
+    }
+    ,
     async uploadTopBannerHallImage(hall, index) {
       if (hall.topBannerImageFile) {
         let storageRef = firebase.storage().ref()
-        let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/topBanner.jpg`);
+        let imageRef = storageRef.child(`Cinemas/Halls/${this.getId()}/${this.currentLang}/${hall.id}/topBanner.jpg`);
 
-        imageRef
-            .put(hall.topBannerImageFile)
-            .then(() => imageRef.getDownloadURL())
-            .then(link => this.halls[index].topBannerImage = link)
+        await imageRef.put(hall.topBannerImageFile)
+        this.halls[index].topBannerImage = await imageRef.getDownloadURL()
 
         this.halls[index].topBannerImageFile = null
       }
-    },
+    }
+    ,
     async facadeUploadHallFiles(hall, index) {
-      Promise.all([
+      await Promise.all([
         await this.uploadSchemeHallImage(hall, index),
         await this.uploadTopBannerHallImage(hall, index),
         await this.uploadHallImages(hall, index)
       ])
-    },
+    }
+    ,
     async deleteHallFiles(id) {
       let storage = firebase.storage();
 
-      let schemeImage = storage.ref('Cinemas/Halls/' + id + '/schemeImage.jpg')
-      let topBannerImage = storage.ref('Cinemas/Halls/' + id + '/topBanner.jpg')
+      console.log(id)
+
+      let schemeImage = storage.ref(`Cinemas/Halls/${id}/${this.currentLang}/schemeImage.jpg`)
+      let topBannerImage = storage.ref(`Cinemas/Halls/${id}/${this.currentLang}/topBanner.jpg`)
 
       await schemeImage.delete()
       await topBannerImage.delete()
@@ -357,30 +372,18 @@ export default {
     async deleteHalls() {
       if (this.hallsNeedRemove && this.hallsNeedRemove.length) {
         for await (let id of this.hallsNeedRemove) {
-          let ref = db.collection('Cinemas').doc('data').collection('halls').doc(this.cinema.id).collection('halls').doc(id)
+          let ref = db.collection('Cinemas').doc('data').collection('halls').doc(this.getId()).collection(this.currentLang).doc(id)
 
-          await this.deleteHallFiles(id)
-          ref.delete()
+          await Promise.all([this.deleteHallFiles(id), ref.delete()])
         }
       }
 
       this.hallsNeedRemove = []
-    },
-    async saveHallsToDatabase(hall) {
-      let id = this.getId()
+    }
+    ,
+    async saveHallsToDatabase(hall, link) {
 
-      let halls = db.collection('Cinemas').doc('data')
-          .collection('halls').doc(id).collection('halls')
-
-      let hallId
-
-      if (hall.id) {
-        hallId = hall.id
-      } else {
-        hallId = halls.doc().id
-      }
-
-      await halls.doc(hallId).set({
+      await link.doc(hall.id).set({
         hallNumber: hall.hallNumber,
         description: hall.description,
         hallSchemeImage: hall.hallSchemeImage,
@@ -388,25 +391,35 @@ export default {
         images: hall.images,
         seo: hall.seo,
         isInit: true,
-        id: hallId,
+        id: hall.id,
         date: hall.date,
         isFetching: false
       })
-    },
-    async saveHalls() {
-      await this.deleteHalls()
+    }
+    ,
+    async saveHalls(id) {
+      await this.deleteHalls(id)
+
+      let halls = db.collection('Cinemas').doc('data')
+          .collection('halls').doc(id).collection(this.currentLang)
 
       for await (let [index, value] of this.halls.entries()) {
+        if (!value.id) {
+          value.id = halls.doc().id
+        }
+
         await this.facadeUploadHallFiles(value, index)
-        await this.saveHallsToDatabase(value)
+        await this.saveHallsToDatabase(value, halls)
       }
-    },
-    async facadeUploadImages() {
+    }
+    ,
+    async facadeUploadImages(id) {
       await Promise.all([
-          await this.uploadImages(),
-        await this.uploadLogotypeImage(),
-        await this.uploadTopBannerImage()])
-    },
+        this.uploadImages(id),
+        this.uploadLogotypeImage(id),
+        this.uploadTopBannerImage(id)])
+    }
+    ,
     getId() {
       if (this.cinema.id) {
         return this.cinema.id
@@ -419,7 +432,17 @@ export default {
       if (this.$route.params.id !== 'addCinema') {
         return this.cinema.id = this.$route.params.id
       }
-    },
+    }
+  }
+  ,
+  computed: {
+    ...mapGetters(['currentLang'])
+  },
+  watch: {
+    currentLang() {
+      this.getData()
+      this.getCinemaLang()
+    }
   },
   async mounted() {
     await this.getData()

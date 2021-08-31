@@ -32,20 +32,17 @@ export default {
   },
   methods: {
     changeState(e) {
-      console.log('be changed')
       this.$emit('changeState', e.target.checked)
     },
     switcherInit() {
       /* eslint-env jquery */
 
       let switcherState = $("[name='my-checkbox']")
-      console.log(this.isChecked)
       switcherState.bootstrapSwitch('state', this.isChecked);
 
       switcherState.on('switchChange.bootstrapSwitch', function () {
         $(this)[0].dispatchEvent(new Event("change"))
       })
-      console.log(this.isChecked)
     },
   },
   mounted() {

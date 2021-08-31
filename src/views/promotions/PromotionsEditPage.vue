@@ -1,10 +1,13 @@
 <template>
-  <Preloader v-if="!init" />
+  <Preloader v-if="!init"/>
 
   <section v-else class="newsEditPage">
-    <Language :currentLang="currentLang" @changeLang="changeLang">
-      <SwitcherWithText v-model="state" :stateText="stateText" />
-    </Language>
+
+    <div class="switcher">
+      <SwitcherWithText class="margin" v-model="state" :stateText="stateText"/>
+    </div>
+
+    <hr>
 
     <div class="row-wrap">
       <div>
@@ -14,7 +17,7 @@
         />
       </div>
       <div>
-        <DateWithText :text="lang.date" v-model="date" />
+        <DateWithText :text="lang.date" v-model="date"/>
       </div>
     </div>
 
@@ -64,7 +67,6 @@
 
 <script>
 import SwitcherWithText from "../../components/general/SwitcherWithText";
-import Language from "../../components/general/Language";
 import InputWithText from "../../components/general/InputWithText";
 import TextAreaWithText from "../../components/general/TextAreaWithText";
 import ImageWithTwoButton from "../../components/general/ImageWithTwoButton";
@@ -76,6 +78,8 @@ import ImageRow from "../../components/general/imagesRow/ImagesRow";
 import DateWithText from "../../components/general/DateWithText";
 import db from '@/firebase/firebaseInit.js'
 import Preloader from "../../components/general/Preloader";
+import {mapGetters} from 'vuex'
+
 export default {
   name: "PromotionsEditPage",
   components: {
@@ -83,12 +87,12 @@ export default {
     DateWithText,
     ImageRow,
     SaveButton,
-    Seo, YoutubeLink, ImageWithTwoButton, TextAreaWithText, InputWithText, Language, SwitcherWithText},
+    Seo, YoutubeLink, ImageWithTwoButton, TextAreaWithText, InputWithText, SwitcherWithText
+  },
   data() {
     return {
       title: '',
       date: '',
-      currentLang: 'ru',
       state: null,
       stateText: 'ВЫКЛ',
       description: '',
@@ -98,6 +102,7 @@ export default {
       imagesFiles: [],
       youtubeLink: '',
       id: '',
+      to: 'promotionEdit',
       init: false,
       isFetching: false,
       seo: {
@@ -139,20 +144,13 @@ export default {
     changeState(state) {
       this.state = state
     },
-    async changeLang(lang) {
-      this.currentLang = lang
+    async changeLang() {
 
-      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Promotions').collection('Promotions').doc(lang))
+      let result = await server.getLang(this.currentLang, db.collection('Language').doc('Promotions').collection('Promotions').doc(this.currentLang))
 
       this.lang = result.data()
     },
-    getLang() {
-      if (!this.currentLang) {
-        this.currentLang = navigator.language || navigator.userLanguage
-      }
-
-      this.changeLang(this.currentLang)
-    },
+    async getLang() { await this.changeLang(this.currentLang) },
     changeDate(date) {
       this.date = date
     },
@@ -163,10 +161,14 @@ export default {
       let id = this.$route.params.id
 
       if (id && id !== 'addPromotion') {
-        let data = await server.getCurrentData(id, 'Promotions')
+        let data = await server.getCurrentData(id, 'Promotions', this.currentLang)
 
-        for (let value in data) {
-          this[value] = data[value]
+        if (data) {
+          for (let value in data) {
+            this[value] = data[value]
+          }
+        } else {
+          Object.assign(this.$data, this.$options.data.call(this), {lang: this.lang, init: true, id: this.id, to: 'promotionEdit'})
         }
       } else {
         this.init = true
@@ -174,7 +176,7 @@ export default {
     },
     async save() {
       this.isFetching = true
-      this.id = await server.getId(this.id, 'Promotions')
+      this.id = await server.getId(this.id, 'Promotions', this.currentLang)
 
       if (!this.date) {
         this.date = this.getDate()
@@ -183,7 +185,6 @@ export default {
       await server.save({
         title: this.title,
         date: this.date,
-        currentLang: this.currentLang,
         stateText: this.stateText,
         description: this.description,
         mainImage: this.mainImage,
@@ -191,10 +192,11 @@ export default {
         youtubeLink: this.youtubeLink,
         state: this.state,
         id: this.id,
+        to: this.to,
         init: true,
         seo: this.seo,
         isFetching: false
-      }, 'Promotions', this.mainImageFile, this.images, this.imagesFiles)
+      }, 'Promotions', this.mainImageFile, this.images, this.imagesFiles, null, this.currentLang)
       this.isFetching = false
       await this.$router.push({name: 'promotions'})
     },
@@ -207,7 +209,9 @@ export default {
 
       let reader = new FileReader()
 
-      reader.onload =  () => { this.mainImage = reader.result }
+      reader.onload = () => {
+        this.mainImage = reader.result
+      }
 
       reader.readAsDataURL(file)
     },
@@ -218,13 +222,16 @@ export default {
         /* eslint-env jquery */
         this.stateText = 'ВКЛ'
         $('#toggle-demo').bootstrapToggle('on')
-      }
-      else {
+      } else {
         this.stateText = 'ВЫКЛ'
         $('#toggle-demo').bootstrapToggle('off')
       }
+    },
+    currentLang() {
+      Promise.all([this.getLang(), this.getData()])
     }
   },
+  computed: mapGetters(['currentLang']),
   mounted() {
     this.getLang()
     this.getData()
@@ -242,5 +249,15 @@ export default {
 
 .row-wrap > div {
   width: 50%;
+}
+
+.switcher {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.margin {
+  margin: 5px 150px 0 0;
+  align-items: center;
 }
 </style>

@@ -1,15 +1,11 @@
 <template>
   <Preloader v-if="!cinema.isInit"/>
   <div v-else class="cinema-edit">
+    <InputWithText :text="cinemaLang.title" v-model="cinema.title"/>
 
-    <Language @changeLang="changeLang" :currentLang="cinema.currentLang"
-    />
+    <TextAreaWithText :text="cinemaLang.description" v-model="cinema.description"/>
 
-    <InputWithText :text="cinemaLang.title" v-model="cinema.title" />
-
-    <TextAreaWithText :text="cinemaLang.description" v-model="cinema.description" />
-
-    <TextAreaWithText :text="cinemaLang.conditions" v-model="cinema.conditions" />
+    <TextAreaWithText :text="cinemaLang.conditions" v-model="cinema.conditions"/>
 
     <ImageWithTwoButton
         :text="cinemaLang.logotype"
@@ -66,7 +62,6 @@ import ImageWithTwoButton from "../../components/general/ImageWithTwoButton";
 import InputWithText from "../../components/general/InputWithText";
 import Seo from "../../components/general/Seo";
 import ImagesRow from "../../components/general/imagesRow/ImagesRow";
-import Language from "../../components/general/Language";
 import SaveButton from "../../components/general/SaveButton";
 import HallList from "../../components/cinemas/halls/HallList";
 import Preloader from "../../components/general/Preloader";
@@ -75,7 +70,7 @@ export default {
   name: "CinemaEditPage.vue",
   components: {
     Preloader,
-    HallList, SaveButton, Language, Seo, InputWithText, ImageWithTwoButton, TextAreaWithText, ImagesRow
+    HallList, SaveButton, Seo, InputWithText, ImageWithTwoButton, TextAreaWithText, ImagesRow
   },
   props: {
     cinema: {
@@ -88,9 +83,6 @@ export default {
       type: Object
     }
   },
-data() {
-  return {}
-},
   methods: {
     removeLogotypeImage() {
       this.$emit('removeLogotypeImage')
@@ -136,12 +128,6 @@ data() {
     removeHall(index) {
       this.$emit('removeHall', index)
     }
-  },
-  watch: {
-
-    },
-  mounted() {
-
   }
 }
 </script>
