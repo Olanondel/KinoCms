@@ -38,6 +38,7 @@
         >
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+          <NavItem to="statistic" text="Статистика" icon="fa-images" />
           <NavItem to="banners" text="Баннера/Слайдеры" icon="fa-images" />
           <NavItem to="films" text="Фильмы" icon="fa-film" />
           <NavItem to="cinemas" text="Кинотеатры" icon="fa-photo-video" />
