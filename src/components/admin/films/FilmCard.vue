@@ -1,6 +1,6 @@
 <template>
   <div class="card-wrapper">
-    <router-link class="film-link" :to="{name: 'filmEdit', params: {id, from}}" :title="title">
+    <router-link class="film-link" :to="{name: 'filmEdit', params: {id}, query: {from}}" :title="title">
         <div class="film-card">
       <img class="film-card__image" :src="image" :alt="title" />
       <div class="film-card__title">{{title}}</div>

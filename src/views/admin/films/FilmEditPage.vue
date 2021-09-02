@@ -88,7 +88,6 @@ export default {
       init: false,
       langData: null,
       lang: null,
-      from: '',
       error: ''
     };
   },
@@ -143,7 +142,7 @@ export default {
     },
     async removeFilm() {
       let id = this.$route.params.id;
-      let from = this.$route.params.from;
+      let from = this.$route.query.from;
 
       if (id !== 'addToCurrent' && id !== 'addToFuture') {
         await db.collection(from).doc(id).delete()
@@ -241,7 +240,7 @@ export default {
           this.$route.params.id !== "addToCurrent" &&
           this.$route.params.id !== "addToFuture"
       ) {
-        let from = this.from || this.$route.params.from
+        let from = this.$route.query.from
 
         let dataLink = db.collection('Films').doc(from)
             .collection(this.currentLang)

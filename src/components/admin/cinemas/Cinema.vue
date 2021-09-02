@@ -1,6 +1,6 @@
 <template>
   <div class="cinema">
-    <router-link class="cinema__link" :to="'/cinemaConfig/' + id">
+    <router-link class="cinema__link" :to="{name: 'cinemaConfig', params: { id }}">
       <div class="image-wrap">
         <CloseElementButton :isFetching="isFetching" @remove="removeCinema(index, id)" />
         <img class="cinema-image" :src="logotype || require('@/assets/image/empty.jpg')" alt="cinema">

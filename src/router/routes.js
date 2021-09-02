@@ -21,28 +21,27 @@ import Register from "../views/admin/Register";
 import Login from "../views/admin/Login";
 
 export const routes = [
-  {path: "", name: "statistic", component: Statistic},
-  {path: "/banners", name: "banners", component: Banners},
-  {path: "/films", name: "films", component: Films,},
-  {path: "/news", name: "news", component: News},
-  {path: "/newsEdit/:id", name: "newsEdit", component: NewsEditPage},
-  {path: "/promotions", name: "promotions", component: Promotions},
-  {path: "/promotionEdit/:id", name: "promotionEdit", component: PromotionsEditPage},
-  {path: "/pages/", name: "pages", component: Pages},
-  {path: "/pages/mainPage", name: "mainEdit", component: MainEdit},
-  {path: "/pages/contacts", name: "contacts", component: Contacts},
-  {path: "/pages/:id", name: "general", component: GeneralPage},
-  {path: "/mainPage", name: "mainEdit", component: MainEdit},
-  {path: "/users", name: "users", component: Users},
-  {path: "/userEdit", name: "userEdit", component: UserEdit},
-  {path: "/mailing", name: "mailing", component: Mailing},
-  {path: "/films/:id", name: 'filmEdit', component: FilmEditPage},
-  {path: "/cinemas", name: "cinemas", component: Cinemas},
+  {path: "/admin", name: "statistic", component: Statistic},
+  {path: "/admin/banners", name: "banners", component: Banners},
+  {path: "/admin/films", name: "films", component: Films,},
+  {path: "/admin/news", name: "news", component: News},
+  {path: "/admin/newsEdit/:id", name: "newsEdit", component: NewsEditPage},
+  {path: "/admin/promotions", name: "promotions", component: Promotions},
+  {path: "/admin/promotionEdit/:id", name: "promotionEdit", component: PromotionsEditPage},
+  {path: "/admin/pages/", name: "pages", component: Pages},
+  {path: "/admin/pages/mainPage", name: "mainEdit", component: MainEdit},
+  {path: "/admin/pages/contacts", name: "contacts", component: Contacts},
+  {path: "/admin/pages/:id", name: "general", component: GeneralPage},
+  {path: "/admin/users", name: "users", component: Users},
+  {path: "/admin/userEdit/:id", name: "userEdit", component: UserEdit},
+  {path: "/admin/mailing", name: "mailing", component: Mailing},
+  {path: "/admin/films/:id", name: 'filmEdit', component: FilmEditPage},
+  {path: "/admin/cinemas", name: "cinemas", component: Cinemas},
   {path: "/register", name: "register", component: Register},
   {path: "/login", name: "login", component: Login},
 
   {
-    path: "/cinemaConfig/:id", component: CinemaConfig, children: [
+    path: "/admin/cinemaConfig/:id", component: CinemaConfig, children: [
       {
         path: '',
         component: CinemaEditPage,
