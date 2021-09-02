@@ -30,10 +30,10 @@ import '../public/plugins/icheck-bootstrap/icheck-bootstrap.min.css'
 import '../public/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css'
 import '../public/plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css'
 
-import Footer from '@/layout/Footer.vue';
-import Header from '@/layout/Header.vue';
-import Navigation from '@/layout/Navigation.vue';
-import Modal from "./components/general/Modal";
+import Footer from './layout/admin/Footer.vue';
+import Header from './layout/admin/Header.vue';
+import Navigation from './layout/admin/Navigation.vue';
+import Modal from "./components/admin/general/Modal";
 
 export default {
   components: {
