@@ -36,7 +36,7 @@
 // * useWorker: Set to true to enable web worker mode. You'll probably
 //   want to feature detect the actual value you use here, for example
 //   !!window.Worker.
-// * workerScript: The main script of the worker. Point this to
+// * workerScript: The site script of the worker. Point this to
 //   wherever you are hosting worker.js from this directory.
 // * workerDeps: An array of paths pointing (relative to workerScript)
 //   to the Acorn and Tern libraries and any Tern plugins you want to

@@ -21,6 +21,7 @@
           :btnText="lang.imageRowText"
       />
       <YoutubeLink :link="trailer" v-model="trailer" :text="lang.trailer"/>
+
       <FilmType
           @change="changeTypes"
           :value="types"
@@ -188,7 +189,7 @@ export default {
         trailer: this.trailer,
         types: this.types,
         seo: this.seo,
-        from: from
+        from
       });
 
       this.$router.push({name: "films"});
@@ -197,7 +198,7 @@ export default {
       this.isRequesting = true
 
       let id
-      let from = this.$route.params.from
+      let from = this.$route.query.from
 
       if (!from && this.$route.params.id === 'addToCurrent') {
         from = 'currentFilms'

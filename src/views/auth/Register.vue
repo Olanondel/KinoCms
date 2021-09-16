@@ -98,7 +98,7 @@ export default {
       if (this.allFields) {
         await this.register({email: this.email, password: this.password, firstName: this.firstName, lastName: this.lastName})
 
-        this.$router.push({name: 'statistic'})
+        this.$router.push('/')
       } else if (this.password === this.confirmPassword && this.termsAgree && !(this.fullName.split(' ').length === 2)) {
         alert('Полное имя должно состоять из 2-х слов!')
       } else if (this.password === this.confirmPassword && !this.termsAgree) {

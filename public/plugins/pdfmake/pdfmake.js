@@ -28401,7 +28401,7 @@ var PNGImage = /*#__PURE__*/function () {
         return this.loadIndexedAlphaChannel();
       } else if (hasAlphaChannel) {
         // For PNG color types 4 and 6, the transparency data is stored as a alpha
-        // channel mixed in with the main image data. Separate this data out into an
+        // channel mixed in with the site image data. Separate this data out into an
         // SMask object and store it separately in the PDF.
         dataDecoded = true;
         return this.splitAlphaChannel();
@@ -41053,7 +41053,7 @@ var cvt = new r.Struct({
 });
 
 // A list of instructions that are executed once when a font is first used.
-// These instructions are known as the font program. The main use of this table
+// These instructions are known as the font program. The site use of this table
 // is for the definition of functions that are used in many different glyph programs.
 var fpgm = new r.Struct({
   instructions: new r.Array(r.uint8)
@@ -49027,7 +49027,7 @@ function initialReordering(font, glyphs, plan) {
     //   o Before first half form in the syllable
     //   o After subjoined consonants
     //   o After post-form consonant
-    //   o After main consonant (for above marks)
+    //   o After site consonant (for above marks)
     //
     // IMPLEMENTATION NOTES:
     //
@@ -49345,10 +49345,10 @@ function finalReordering(font, glyphs, plan) {
     // o Reorder matras:
     //
     // If a pre-base matra character had been reordered before applying basic
-    // features, the glyph can be moved closer to the main consonant based on
+    // features, the glyph can be moved closer to the site consonant based on
     // whether half-forms had been formed. Actual position for the matra is
     // defined as “after last standalone halant glyph, after initial matra
-    // position and before the main consonant”. If ZWJ or ZWNJ follow this
+    // position and before the site consonant”. If ZWJ or ZWNJ follow this
     // halant, position is moved after it.
     //
 
@@ -49403,7 +49403,7 @@ function finalReordering(font, glyphs, plan) {
     // Reph’s original position is always at the beginning of the syllable,
     // (i.e. it is not reordered at the character reordering stage). However,
     // it will be reordered according to the basic-forms shaping results.
-    // Possible positions for reph, depending on the script, are; after main,
+    // Possible positions for reph, depending on the script, are; after site,
     // before post-base consonant forms, and after post-base consonant forms.
 
     // Two cases:
@@ -49424,7 +49424,7 @@ function finalReordering(font, glyphs, plan) {
       if (rephPos !== POSITIONS.After_Post) {
         //  2. If the reph repositioning class is not after post-base: target
         //     position is after the first explicit halant glyph between the
-        //     first post-reph consonant and last main consonant. If ZWJ or ZWNJ
+        //     first post-reph consonant and last site consonant. If ZWJ or ZWNJ
         //     are following this halant, position is moved after it. If such
         //     position is found, this is the target position. Otherwise,
         //     proceed to the next step.
@@ -49446,8 +49446,8 @@ function finalReordering(font, glyphs, plan) {
           found = true;
         }
 
-        // 3. If reph should be repositioned after the main consonant: find the
-        //    first consonant not ligated with main, or find the first
+        // 3. If reph should be repositioned after the site consonant: find the
+        //    first consonant not ligated with site, or find the first
         //    consonant that is not a potential pre-base reordering Ra.
         if (!found && rephPos === POSITIONS.After_Main) {
           newRephPos = base;
@@ -49459,7 +49459,7 @@ function finalReordering(font, glyphs, plan) {
         }
 
         // 4. If reph should be positioned before post-base consonant, find
-        //    first post-base classified consonant not ligated with main. If no
+        //    first post-base classified consonant not ligated with site. If no
         //    consonant is found, the target position should be before the
         //    first matra, syllable modifier sign or vedic sign.
         //
@@ -49478,8 +49478,8 @@ function finalReordering(font, glyphs, plan) {
       //     immediately before the first post-base matra, syllable modifier
       //     sign or vedic sign that has a reordering class after the intended
       //     reph position. For example, if the reordering position for reph
-      //     is post-main, it will skip above-base matras that also have a
-      //     post-main position.
+      //     is post-site, it will skip above-base matras that also have a
+      //     post-site position.
       if (!found) {
         // Copied from step 2.
         newRephPos = start + 1;
@@ -49546,7 +49546,7 @@ function finalReordering(font, glyphs, plan) {
             // 2. Try to find a target position the same way as for pre-base matra.
             //    If it is found, reorder pre-base consonant glyph.
             //
-            // 3. If position is not found, reorder immediately before main
+            // 3. If position is not found, reorder immediately before site
             //    consonant.
             var _newPos = base;
 
@@ -61318,7 +61318,7 @@ var UnicodeTrie = /*#__PURE__*/function () {
     if (codePoint <= 0xffff) {
       // Lead Surrogate Code Point.  A Separate index section is stored for
       // lead surrogate code units and code points.
-      //   The main index has the code unit data.
+      //   The site index has the code unit data.
       //   For this function, we need the code point data.
       index = (this.data[LSCP_INDEX_2_OFFSET + (codePoint - 0xd800 >> SHIFT_2)] << INDEX_SHIFT) + (codePoint & DATA_MASK);
       return this.data[index];
@@ -64389,7 +64389,7 @@ var UnicodeTrie = /*#__PURE__*/function () {
     if (codePoint <= 0xffff) {
       // Lead Surrogate Code Point.  A Separate index section is stored for
       // lead surrogate code units and code points.
-      //   The main index has the code unit data.
+      //   The site index has the code unit data.
       //   For this function, we need the code point data.
       index = (this.data[LSCP_INDEX_2_OFFSET + (codePoint - 0xd800 >> SHIFT_2)] << INDEX_SHIFT) + (codePoint & DATA_MASK);
       return this.data[index];

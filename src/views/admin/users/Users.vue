@@ -101,7 +101,7 @@ export default {
       return this.allUsers.filter(el => {
         let arr = Object.values(el)
 
-        return arr.some(this.includes)
+        return arr.length ? arr.some(this.includes) : []
       })
     },
     checkMode() {
@@ -125,6 +125,7 @@ export default {
       }
     },
     async removeUser(id, index) {
+
       this.users[index].isFetching = true
       await server.removeElement(id, this.users[index].mainImage, this.users[index].images, 'Users')
       this.users.splice(index, 1)

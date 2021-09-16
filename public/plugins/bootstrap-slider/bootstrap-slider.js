@@ -561,7 +561,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 
 				/* Create tooltip elements */
 				var sliderTooltip = document.createElement("div");
-				sliderTooltip.className = "tooltip tooltip-main";
+				sliderTooltip.className = "tooltip tooltip-site";
 				sliderTooltip.setAttribute('role', 'presentation');
 				createAndAppendTooltipSubElements(sliderTooltip);
 
@@ -614,7 +614,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 			this.touchX = 0;
 			this.touchY = 0;
 
-			this.tooltip = this.sliderElem.querySelector('.tooltip-main');
+			this.tooltip = this.sliderElem.querySelector('.tooltip-site');
 			this.tooltipInner = this.tooltip.querySelector('.tooltip-inner');
 
 			this.tooltip_min = this.sliderElem.querySelector('.tooltip-min');

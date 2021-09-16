@@ -73,7 +73,7 @@ export default {
       try {
         await this.login({email: this.email, password: this.password})
 
-        await this.$router.push({name: 'statistic'})
+        await this.$router.push('/')
       } catch (e) { console.log(e) }
     }
   },

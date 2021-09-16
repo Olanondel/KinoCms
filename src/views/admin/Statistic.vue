@@ -572,7 +572,7 @@
       </section>
       <!-- right col -->
     </div>
-    <!-- /.row (main row) -->
+    <!-- /.row (site row) -->
   </div>
 </template>
 

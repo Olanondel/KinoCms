@@ -95,13 +95,13 @@
   var $dropdown_legacy_offset_checkbox = $('<input />', {
     type: 'checkbox',
     value: 1,
-    checked: $('.main-header').hasClass('dropdown-legacy'),
+    checked: $('.site-header').hasClass('dropdown-legacy'),
     class: 'mr-1'
   }).on('click', function () {
     if ($(this).is(':checked')) {
-      $('.main-header').addClass('dropdown-legacy')
+      $('.site-header').addClass('dropdown-legacy')
     } else {
-      $('.main-header').removeClass('dropdown-legacy')
+      $('.site-header').removeClass('dropdown-legacy')
     }
   })
   var $dropdown_legacy_offset_container = $('<div />', { class: 'mb-1' }).append($dropdown_legacy_offset_checkbox).append('<span>Dropdown Legacy Offset</span>')
@@ -110,13 +110,13 @@
   var $no_border_checkbox = $('<input />', {
     type: 'checkbox',
     value: 1,
-    checked: $('.main-header').hasClass('border-bottom-0'),
+    checked: $('.site-header').hasClass('border-bottom-0'),
     class: 'mr-1'
   }).on('click', function () {
     if ($(this).is(':checked')) {
-      $('.main-header').addClass('border-bottom-0')
+      $('.site-header').addClass('border-bottom-0')
     } else {
-      $('.main-header').removeClass('border-bottom-0')
+      $('.site-header').removeClass('border-bottom-0')
     }
   })
   var $no_border_container = $('<div />', { class: 'mb-4' }).append($no_border_checkbox).append('<span>No border</span>')
@@ -288,13 +288,13 @@
   var $no_expand_sidebar_checkbox = $('<input />', {
     type: 'checkbox',
     value: 1,
-    checked: $('.main-sidebar').hasClass('sidebar-no-expand'),
+    checked: $('.site-sidebar').hasClass('sidebar-no-expand'),
     class: 'mr-1'
   }).on('click', function () {
     if ($(this).is(':checked')) {
-      $('.main-sidebar').addClass('sidebar-no-expand')
+      $('.site-sidebar').addClass('sidebar-no-expand')
     } else {
-      $('.main-sidebar').removeClass('sidebar-no-expand')
+      $('.site-sidebar').removeClass('sidebar-no-expand')
     }
   })
   var $no_expand_sidebar_container = $('<div />', { class: 'mb-4' }).append($no_expand_sidebar_checkbox).append('<span>Disable Hover/Focus Auto-Expand</span>')
@@ -336,13 +336,13 @@
   var $text_sm_header_checkbox = $('<input />', {
     type: 'checkbox',
     value: 1,
-    checked: $('.main-header').hasClass('text-sm'),
+    checked: $('.site-header').hasClass('text-sm'),
     class: 'mr-1'
   }).on('click', function () {
     if ($(this).is(':checked')) {
-      $('.main-header').addClass('text-sm')
+      $('.site-header').addClass('text-sm')
     } else {
-      $('.main-header').removeClass('text-sm')
+      $('.site-header').removeClass('text-sm')
     }
   })
   var $text_sm_header_container = $('<div />', { class: 'mb-1' }).append($text_sm_header_checkbox).append('<span>Navbar</span>')
@@ -381,13 +381,13 @@
   var $text_sm_footer_checkbox = $('<input />', {
     type: 'checkbox',
     value: 1,
-    checked: $('.main-footer').hasClass('text-sm'),
+    checked: $('.site-footer').hasClass('text-sm'),
     class: 'mr-1'
   }).on('click', function () {
     if ($(this).is(':checked')) {
-      $('.main-footer').addClass('text-sm')
+      $('.site-footer').addClass('text-sm')
     } else {
-      $('.main-footer').removeClass('text-sm')
+      $('.site-footer').removeClass('text-sm')
     }
   })
   var $text_sm_footer_container = $('<div />', { class: 'mb-4' }).append($text_sm_footer_checkbox).append('<span>Footer</span>')
@@ -503,7 +503,7 @@
   var navbar_all_colors = navbar_dark_skins.concat(navbar_light_skins)
   var $navbar_variants_colors = createSkinBlock(navbar_all_colors, function () {
     var color = $(this).data('color')
-    var $main_header = $('.main-header')
+    var $main_header = $('.site-header')
     $main_header.removeClass('navbar-dark').removeClass('navbar-light')
     navbar_all_colors.forEach(function (color) {
       $main_header.removeClass(color)
@@ -523,7 +523,7 @@
   })
 
   var active_navbar_color = null
-  $('.main-header')[0].classList.forEach(function (className) {
+  $('.site-header')[0].classList.forEach(function (className) {
     if (navbar_all_colors.indexOf(className) > -1 && active_navbar_color === null) {
       active_navbar_color = className.replace('navbar-', 'bg-')
     }
@@ -572,7 +572,7 @@
   var $sidebar_dark_variants = createSkinBlock(sidebar_colors, function () {
     var color = $(this).data('color')
     var sidebar_class = 'sidebar-dark-' + color.replace('bg-', '')
-    var $sidebar = $('.main-sidebar')
+    var $sidebar = $('.site-sidebar')
     sidebar_skins.forEach(function (skin) {
       $sidebar.removeClass(skin)
       $sidebar_light_variants.removeClass(skin.replace('sidebar-dark-', 'bg-')).removeClass('text-light')
@@ -587,7 +587,7 @@
   $container.append($sidebar_dark_variants)
 
   var active_sidebar_dark_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
+  $('.site-sidebar')[0].classList.forEach(function (className) {
     var color = className.replace('sidebar-dark-', 'bg-')
     if (sidebar_colors.indexOf(color) > -1 && active_sidebar_dark_color === null) {
       active_sidebar_dark_color = color
@@ -605,7 +605,7 @@
   var $sidebar_light_variants = createSkinBlock(sidebar_colors, function () {
     var color = $(this).data('color')
     var sidebar_class = 'sidebar-light-' + color.replace('bg-', '')
-    var $sidebar = $('.main-sidebar')
+    var $sidebar = $('.site-sidebar')
     sidebar_skins.forEach(function (skin) {
       $sidebar.removeClass(skin)
       $sidebar_dark_variants.removeClass(skin.replace('sidebar-light-', 'bg-')).removeClass('text-light')
@@ -620,7 +620,7 @@
   $container.append($sidebar_light_variants)
 
   var active_sidebar_light_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
+  $('.site-sidebar')[0].classList.forEach(function (className) {
     var color = className.replace('sidebar-light-', 'bg-')
     if (sidebar_colors.indexOf(color) > -1 && active_sidebar_light_color === null) {
       active_sidebar_light_color = color

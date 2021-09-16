@@ -1,12 +1,14 @@
 <template>
-  <div class="slider">
+  <div class="content-wrapper">
+    <div class="container">
 
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Slider.vue"
+  name: "SiteCinemas"
 }
 </script>
 

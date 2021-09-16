@@ -1,7 +1,7 @@
 <template>
   <section class="userEdit">
     <div class="own-flex">
-      <InputWithText text="Имя" v-model="firstName" />
+      <InputWithText text="Имя" v-model="firstName"/>
       <RadioWithText
           text="Язык"
           value1="ru"
@@ -11,12 +11,12 @@
           text2="Украинский"
           id2="radio2"
           name="radioname1"
-          v-model="language"
+          :current="language"
       />
     </div>
 
     <div class="own-flex">
-      <InputWithText text="Фамилия" v-model="lastName" />
+      <InputWithText text="Фамилия" v-model="lastName"/>
       <RadioWithText
           text="Пол"
           value1="male"
@@ -26,34 +26,34 @@
           text2="Женский"
           id2="radio4"
           name="radioname2"
-          v-model="gender"
+          :current="gender"
       />
     </div>
 
     <div class="own-flex">
-      <InputWithText text="Псевдоним" v-model="nickname" />
-      <InputWithText text="Телефон" v-model="phone" type="tel" />
+      <InputWithText text="Псевдоним" v-model="nickname"/>
+      <InputWithText text="Телефон" v-model="phone" type="tel"/>
     </div>
 
     <div class="own-flex">
-      <InputWithText text="E-mail" v-model="email" />
+      <InputWithText text="E-mail" v-model="email"/>
 
       <DateWithText text="Дата рождения" v-model="dob"/>
     </div>
 
     <div class="own-flex">
-      <InputWithText text="Адресс" v-model="address" />
-      <SelectWithText text="Город" v-model="city" />
+      <InputWithText text="Адресс" v-model="address"/>
+      <SelectWithText text="Город" v-model="city"/>
     </div>
 
     <div class="own-flex">
-      <InputWithText type="password" text="Пароль" v-model="password" />
-      <InputWithText type="password" text="Повторить пароль" v-model="password1" />
+      <InputWithText type="password" text="Пароль" v-model="password"/>
+      <InputWithText type="password" text="Повторить пароль" v-model="confirmPassword"/>
     </div>
 
-    <InputWithText text="Номер карты" v-model="cardNumber" />
+    <InputWithText text="Номер карты" v-model="cardNumber"/>
 
-    <SaveButton :isFetching="isFetching" @saveEvent="save" />
+    <SaveButton :isFetching="isFetching" @saveEvent="save"/>
   </section>
 </template>
 
@@ -76,7 +76,7 @@ export default {
       email: '',
       address: '',
       password: '',
-      password1: '',
+      confirmPassword: '',
       cardNumber: '',
       language: 'ru',
       gender: 'male',
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     async save() {
-      if (this.password1 === this.password) {
+      if (this.confirmPassword === this.password) {
         this.isFetching = true
         this.id = await server.getId(this.id, 'Users')
 
@@ -100,7 +100,7 @@ export default {
           email: this.email,
           address: this.address,
           password: this.password,
-          password1: this.password1,
+          confirmPassword: this.confirmPassword,
           cardNumber: this.cardNumber,
           language: this.language,
           gender: this.gender,
@@ -112,7 +112,7 @@ export default {
           isFetching: false,
         }, 'Users')
         this.isFetching = false
-        await this.$router.push({ name: 'users' })
+        await this.$router.push({name: 'users'})
       } else {
         alert('Пароли не совпадают')
       }
@@ -126,20 +126,22 @@ export default {
         for (let key in data) {
           this[key] = data[key]
         }
-      }
-    },
-    getDate() {
-      let today = new Date();
-      let dd = String(today.getDate()).padStart(2, '0');
-      let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-      let yyyy = today.getFullYear();
-
-      return today = dd + '-' + mm + '-' + yyyy;
-    },
+    }
   },
-  created() {
-    this.setData()
-  }
+  getDate() {
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+
+    return today = dd + '-' + mm + '-' + yyyy;
+  },
+}
+,
+created()
+{
+  this.setData()
+}
 }
 </script>
 

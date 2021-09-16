@@ -5,24 +5,26 @@
     <div class="general__content">
       <div class="icheck-primary d-inline">
         <input
-            type="radio"
-            :id="id1"
-            :name="name"
-            :value="value1"
-            @change="$emit('change', $event.target.value)"
+          type="radio"
+          :id="id1"
+          :name="name"
+          :value="value1"
+          v-model="state"
+          @change="changeCurrent"
         >
-        <label :for="id1">{{text1}}</label>
+        <label :for="id1">{{ text1 }}</label>
       </div>
 
       <div class="icheck-primary d-inline">
         <input
-            type="radio"
-            :id="id2"
-            :name="name"
-            :value="value2"
-            @change="$emit('change', $event.target.value)"
+          type="radio"
+          :id="id2"
+          :name="name"
+          :value="value2"
+          v-model="state"
+          @change="changeCurrent"
         >
-        <label :for="id2">{{text2}}</label>
+        <label :for="id2">{{ text2 }}</label>
       </div>
     </div>
   </div>
@@ -31,10 +33,6 @@
 <script>
 export default {
   name: "RadioWithText",
-  model: {
-    prop: 'state',
-    event: 'change'
-  },
   props: {
     text: String,
     name: String,
@@ -44,9 +42,21 @@ export default {
     text2: String,
     id1: String,
     id2: String,
-    state: String
+    current: {
+      type: String,
+      default: ''
+    }
   },
-  methods: {}
+  data() {
+    return {
+      state: this.current
+    }
+  },
+  methods: {
+    changeCurrent(value) {
+      this.$emit('changeState', value.target.value)
+    }
+  },
 }
 </script>
 

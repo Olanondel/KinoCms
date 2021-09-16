@@ -125,5 +125,10 @@ export default {
     }
 
     return news.data()
+  },
+  async removeSchedule(lang, doc) {
+    let ref = db.collection('Schedule').doc('Schedule').collection(lang).doc(doc)
+
+    await ref.delete()
   }
 }

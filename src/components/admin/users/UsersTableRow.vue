@@ -12,7 +12,7 @@
         <label :for="data.id" class="custom-control-label"></label>
       </div>
     </td>
-    <td>{{data.id.substr(0, 3)}}</td>
+    <td>{{ subId }}</td>
     <td>{{data.creationalDate}}</td>
     <td>{{data.dob}}</td>
     <td>{{data.email}}</td>
@@ -41,6 +41,9 @@ export default {
   computed: {
     fullName() {
       return this.data.firstName + ' ' + this.data.lastName
+    },
+    subId() {
+      return (this.data.id ? this.data.id.substr(0, 3) : '')
     }
   }
 }

@@ -1,23 +1,8 @@
 <template>
-  <div>
-    <Header/>
-    <Navigation/>
-
-    <Modal
-      text="modal text you are welcome!"
-      btnText="Закрыть"
-      v-if="modal"
-      @close="closeModal"
-    />
-    <div class="content-wrapper px-4 py-2">
-      <section class="content">
-        <router-view/>
-      </section>
-    </div>
-
-    <Footer/>
-
-    <div @click="closeModal" v-if="modal" class="modal-backdrop fade show"></div>
+  <div style="">
+    <Component :is="component">
+      <router-view />
+    </Component>
   </div>
 </template>
 
@@ -29,18 +14,15 @@ import '../public/plugins/fontawesome-free/css/all.min.css'
 import '../public/plugins/icheck-bootstrap/icheck-bootstrap.min.css'
 import '../public/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css'
 import '../public/plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css'
+import 'swiper/swiper.min.css'
 
-import Footer from './layout/admin/Footer.vue';
-import Header from './layout/admin/Header.vue';
-import Navigation from './layout/admin/Navigation.vue';
-import Modal from "./components/admin/general/Modal";
+import AdminLayout from "./layout/admin/AdminLayout";
+import LoginLayout from "./layout/LoginLayout";
+import SiteLayout from "./layout/SiteLayout";
 
 export default {
   components: {
-    Modal,
-    Navigation,
-    Header,
-    Footer
+    AdminLayout, LoginLayout, SiteLayout
   },
   data() {
     return {
@@ -57,13 +39,63 @@ export default {
       this.init = true
     }
   },
+  computed: {
+    component() {
+      return (this.$route.meta.layout || 'Admin') + 'Layout'
+    }
+  },
   async mounted() {
-    await this.getUsers()
+    this.getUsers()
   }
 };
 </script>
 
 <style>
+
+.card {
+  height: 100%;
+}
+
+.card-img-top {
+  max-height: 300px;
+  min-height: 300px;
+  height: 300px;
+  object-fit: contain;
+}
+
+.dropdown-menu-lg {
+  min-width: auto !important;
+}
+
+.main {
+  max-width: 1085px;
+  padding: 14px 15px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.content-wrapper {}
+
+a {
+
+}
+
+a:hover {
+  color: black;
+}
+
+h2 {
+  font-weight: bold;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
 label {
   margin-bottom: 0;

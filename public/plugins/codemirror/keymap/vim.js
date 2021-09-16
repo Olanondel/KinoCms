@@ -27,7 +27,7 @@
  *  3. Instance (External API) implementation
  *  4. Internal state tracking objects (input state, counter) implementation
  *     and instantiation
- *  5. Key handler (the main command dispatcher) implementation
+ *  5. Key handler (the site command dispatcher) implementation
  *  6. Motion, operator, and action implementations
  *  7. Helper functions for the key handler, motions, operators, and actions
  *  8. Set up Vim to work as a keymap for CodeMirror.

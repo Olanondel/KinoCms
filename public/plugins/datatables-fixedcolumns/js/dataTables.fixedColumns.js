@@ -199,7 +199,7 @@ var FixedColumns = function ( dt, init ) {
 
 			/**
 			 * DataTables scrolling element. This element is the DataTables
-			 * component in the display grid (making up the main table - i.e.
+			 * component in the display grid (making up the site table - i.e.
 			 * not the fixed columns).
 			 *  @type     node
 			 *  @default  null
@@ -411,7 +411,7 @@ $.extend( FixedColumns.prototype , {
 	 * the same information (data index information). THe difference between
 	 * the two is that this method takes into account the fixed columns in the
 	 * table, so you can pass in nodes from the master table, or the cloned
-	 * tables and get the index position for the data in the main table.
+	 * tables and get the index position for the data in the site table.
 	 *  @param {node} node TR, TH or TD element to get the information about
 	 *  @returns {int} If nNode is given as a TR, then a single index is 
 	 *    returned, or if given as a cell, an array of [row index, column index
@@ -586,7 +586,7 @@ $.extend( FixedColumns.prototype , {
 					that.dom.scroller.scrollLeft -= xDelta;
 				} );
 
-			// Header will not trigger scroll on left column, but might on `main` (sorting)
+			// Header will not trigger scroll on left column, but might on `site` (sorting)
 			$(that.dom.grid.left.head).on( 'mouseover.DTFC touchstart.DTFC', function () {
 				mouseController = 'main';
 			});
@@ -641,7 +641,7 @@ $.extend( FixedColumns.prototype , {
 				bFirstDraw = false;
 			} )
 			.on('key-focus.dt.DTFC', function () {
-				// KeyTable navigation needs to be main focused
+				// KeyTable navigation needs to be site focused
 				mouseController = 'key';
 			})
 			.on( 'column-sizing.dt.DTFC', function () {
@@ -685,7 +685,7 @@ $.extend( FixedColumns.prototype , {
 			} );
 
 		/* Get things right to start with - note that due to adjusting the columns, there must be
-		 * another redraw of the main table. It doesn't need to be a full redraw however.
+		 * another redraw of the site table. It doesn't need to be a full redraw however.
 		 */
 		this._fnGridLayout();
 		this.s.dt.oInstance.fnDraw(false);

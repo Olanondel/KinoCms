@@ -1,30 +1,38 @@
 <template>
-  <div ref="affiche" class="affiche">
+  <div class="content-wrapper">
+    <div class="container pt-4 pb-4">
 
-    <div class="film-gallery">
-      <FilmCard
-        v-for="film in films"
-        :key="film.id"
+      <PreloaderColor v-if="loading" />
 
-        :image="film.mainImage"
-        :title="film.name"
-      />
+      <section class="affiche card-deck" v-else>
+        <FilmCard
+          v-for="film in films"
+          :key="film.id"
+
+          :image="film.mainImage"
+          :id="film.id"
+          :from="$route.meta.from"
+          :title="film.name"
+          header="Сейчас в кино"
+        />
+      </section>
     </div>
-
   </div>
 </template>
 
 <script>
-import server from '../requests/affiche&soon/requests'
-
-import FilmCard from "../components/site/affiche&soon/FilmCard";
+import server from '../../requests/affiche&soon/requests'
 import {mapGetters} from "vuex";
+import FilmCard from "../../components/site/affiche&soon/FilmCard";
+import PreloaderColor from "../../components/site/preloader/Preloader-color";
+
 export default {
   name: "Affiche",
-  components: {FilmCard},
+  components: {PreloaderColor, FilmCard},
   data() {
     return {
-      films: []
+      films: [],
+      loading: true
     }
   },
   methods: {
@@ -32,6 +40,8 @@ export default {
       let films = await server.getFilms(this.currentLang)
 
       this.films = films ? films : []
+
+      this.loading = false
     }
   },
   computed: mapGetters(['currentLang']),
@@ -41,7 +51,6 @@ export default {
     }
   },
   mounted() {
-    this.$refs.affiche.classList.add('dark-mode')
 
     this.getData()
   }
@@ -49,15 +58,8 @@ export default {
 </script>
 
 <style scoped>
-.film-gallery {
-  padding: 15px;
+.affiche {
   display: flex;
-  min-height: 100%;
-  height: 100%;
+  flex-wrap: wrap;
 }
-
-.film-gallery {
-  margin: 0 -15px;
-}
-
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <section class="login-page">
-    <slot />
+  <section>
+    <router-view />
   </section>
 </template>
 

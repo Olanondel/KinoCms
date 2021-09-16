@@ -3,17 +3,17 @@
     <label class="general__text">{{ text }}</label>
     <div class="film__types">
       <div class="icheck-primary d-inline film-type">
-        <input type="checkbox" id="checkboxPrimary1" v-model="data" value="3d" @change="change"/>
+        <input type="checkbox" id="checkboxPrimary1" v-model="types" value="3d" @change="change"/>
         <label for="checkboxPrimary1">3D </label>
       </div>
 
       <div class="icheck-primary d-inline film-type">
-        <input type="checkbox" id="checkboxPrimary2" v-model="data" value="2d" @change="change"/>
+        <input type="checkbox" id="checkboxPrimary2" v-model="types" value="2d" @change="change"/>
         <label for="checkboxPrimary2">2D </label>
       </div>
 
       <div class="icheck-primary d-inline film-type">
-        <input type="checkbox" id="checkboxPrimary3" v-model="data" value="imax" @change="change"/>
+        <input type="checkbox" id="checkboxPrimary3" v-model="types" value="imax" @change="change"/>
         <label for="checkboxPrimary3">IMAX </label>
       </div>
     </div>
@@ -25,18 +25,22 @@ export default {
   props: {
     value: {
       type: Array,
-      default: () => []
     },
     text: String
   },
   data() {
     return {
-      data: [...this.value]
+      types: this.value
     }
   },
   methods: {
     change() {
-      this.$emit('change', this.data)
+      this.$emit('change', this.types)
+    }
+  },
+  watch: {
+    value() {
+      this.types = this.value
     }
   }
 };
