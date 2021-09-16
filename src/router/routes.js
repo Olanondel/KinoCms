@@ -42,6 +42,12 @@ export const routes = [
     meta: { layout: 'Site' }
   },
   {
+    path: '/cinema/:id',
+    name: 'siteCinema',
+    component: () => import('../views/cinemas/SiteCinema'),
+    meta: { layout: 'Site' }
+  },
+  {
     path: '/filmInfo/:id',
     name: 'filmInfo',
     component: () => import('../views/affiche&soon/FilmInfo'),

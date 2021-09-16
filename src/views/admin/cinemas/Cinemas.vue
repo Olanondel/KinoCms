@@ -16,7 +16,7 @@
       />
 
       <div class="cinema">
-        <router-link to="/cinemaConfig/addCinema">
+        <router-link to="/admin/cinemaConfig/addCinema">
           <div class="add">
             <a class="f">
               <i class="icon fa fa-plus"></i>

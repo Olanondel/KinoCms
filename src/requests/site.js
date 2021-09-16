@@ -48,3 +48,28 @@ export async function getCart(uid) {
 
   return data.data()
 }
+
+export async function getCinemas(lang) {
+  let ref = db.collection('Cinemas').doc('data').collection('editPage').doc(lang).collection(lang)
+
+  let res = await ref.get()
+
+  return  res.docs
+}
+
+export async function getCinema(lang, id) {
+  let ref = db.collection('Cinemas').doc('data').collection('editPage').doc(lang).collection(lang).doc(id)
+
+  let res = await ref.get()
+
+  return  res.data()
+}
+
+export async function getHalls(lang, id) {
+  let ref = db.collection('Cinemas').doc('data').collection('halls').doc(id).collection(lang)
+
+  let res = await ref.get()
+  let halls = res.docs
+
+  return halls.map(doc => doc.data())
+}
