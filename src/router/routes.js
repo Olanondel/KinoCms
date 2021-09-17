@@ -48,6 +48,63 @@ export const routes = [
     meta: { layout: 'Site' }
   },
   {
+    path: '/siteCinemaHall/:id',
+    name: 'siteCinemaHall',
+    component: () => import('../views/cinemas/SiteCinemaHall'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/promotions',
+    name: 'sitePromotions',
+    component: () => import('../views/promotions/SitePromotions'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/promotion/:id',
+    name: 'sitePromotion',
+    component: () => import('../views/promotions/SitePromotion'),
+    meta: { layout: 'Site' }
+  },
+
+  {
+    path: '/aboutCinema',
+    name: 'siteAboutCinema',
+    component: () => import('../views/pages/SiteAboutCinema'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/advertising',
+    name: 'siteAdvertising',
+    component: () => import('../views/pages/SiteAdvertising'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/cafe',
+    name: 'siteCafe',
+    component: () => import('../views/pages/SiteCafe'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/mobileApps',
+    name: 'siteMobileApps',
+    component: () => import('../views/pages/SiteMobileApps'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/contacts',
+    name: 'siteContacts',
+    component: () => import('../views/pages/SiteContacts'),
+    meta: { layout: 'Site' }
+  },
+  {
+    path: '/news',
+    name: 'siteNews',
+    component: () => import('../views/pages/SiteNews'),
+    meta: { layout: 'Site' }
+  },
+
+
+  {
     path: '/filmInfo/:id',
     name: 'filmInfo',
     component: () => import('../views/affiche&soon/FilmInfo'),

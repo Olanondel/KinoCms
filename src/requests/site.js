@@ -73,3 +73,27 @@ export async function getHalls(lang, id) {
 
   return halls.map(doc => doc.data())
 }
+
+export async function getHall(lang, parentId, hallId) {
+  let ref = db.collection('Cinemas').doc('data').collection('halls').doc(parentId).collection(lang).doc(hallId)
+
+  let result = await ref.get()
+
+  return result.data()
+}
+
+export async function getPromotions(lang) {
+  let ref = db.collection('Promotions').doc('Promotions').collection(lang)
+
+  let res = await ref.get()
+
+  return  res.docs
+}
+
+export async function getPromotion(lang, id) {
+  let ref = db.collection('Promotions').doc('Promotions').collection(lang).doc(id)
+
+  let res = await ref.get()
+
+  return  res.data()
+}

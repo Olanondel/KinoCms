@@ -21,11 +21,23 @@
                     <div class="text-center">
                       <img class="img-fluid mb-3" :src="cinema.logotypeImage" alt="User profile picture">
                     </div>
+
+                    <h2 class="text-center mb-5">{{ cinema.title }}</h2>
+
+                    <div class="w-100">
+                      <div
+                        class="bg-indigo color-palette text-center  mb-3"
+                        v-for="item in halls"
+                        :key="item.id"
+                      >
+                        <router-link :to="{name: 'siteCinemaHall', params: { id: item.id}, query: { parent: cinema.id }}">
+                          {{ item.hallNumber }}
+                        </router-link>
+                      </div>
+
+                    </div>
                   </div>
                   <!-- /.card-body -->
-                  <div class="card-footer">
-                    <h2 class="text-center">{{ cinema.title }}</h2>
-                  </div>
                 </div>
                 <!-- /.card -->
               </div>
@@ -37,10 +49,18 @@
                       <div class="active tab-pane" id="activity">
                         <!-- Post -->
                         <div class="post">
-                          <router-link :to="{name: 'schedule'}" class="btn btn-block btn-info mb-3">Расписание сеансов</router-link>
+                          <router-link :to="{name: 'schedule'}" class="btn btn-block btn-info mb-3">Расписание сеансов
+                          </router-link>
 
                           <p class="text-left font-weight-bold">
-                            {{cinema.description}}
+                            <CarouselForImageArray
+                              v-if="isImages"
+                              number="2"
+                              :slides="sliderImages"
+                              :speed="3"
+                            />
+
+                            <img class="img-thumbnail img-fluid img" v-else src="@/assets/image/city.jpg" alt="">
                           </p>
                         </div>
                         <!-- /.post -->
@@ -56,17 +76,6 @@
               <!-- /.col -->
             </div>
             <!-- /.row -->
-
-            <div class="row">
-                <div class="col-4 w-100">
-                  <div
-                    class="bg-indigo color-palette text-center"
-                    v-for="item in halls"
-                    :key="item.id"
-                  ><span>{{item.hallNumber}}</span></div>
-
-                </div>
-            </div>
           </div><!-- /.container-fluid -->
         </section>
       </div>
@@ -79,10 +88,11 @@
 import {getCinema, getHalls} from "../../requests/site";
 import {mapGetters} from "vuex";
 import PreloaderColor from "../../components/site/preloader/Preloader-color";
+import CarouselForImageArray from "../../components/site/CarouselForImageArray";
 
 export default {
   name: "SiteCinema",
-  components: {PreloaderColor},
+  components: {CarouselForImageArray, PreloaderColor},
   data() {
     return {
       cinema: null,
@@ -98,7 +108,17 @@ export default {
       this.halls = await getHalls(this.currentLang, this.$route.params.id)
     }
   },
-  computed: mapGetters(['currentLang']),
+  computed: {
+    ...mapGetters(['currentLang']),
+    isImages() {
+      let arr = this.cinema.images.filter(img => img.length)
+
+      return arr.length
+    },
+    sliderImages() {
+      return this.cinema.images.filter(img => img.length)
+    }
+  },
   async mounted() {
     await Promise.all([this.getCinema(), this.getHalls()])
 
@@ -116,5 +136,11 @@ export default {
 
 .card-img-top {
   object-fit: cover;
+}
+
+.img {
+  min-width: 100%;
+  object-fit: cover;
+  max-height: 460px;
 }
 </style>

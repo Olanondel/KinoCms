@@ -21,16 +21,17 @@
             <router-link :to="{name: 'siteCinemas'}" class="nav-link">Кинотеатры</router-link>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Акции</a>
+            <router-link :to="{name: 'sitePromotions'}" class="nav-link">Акции</router-link>
           </li>
           <li class="nav-item dropdown">
             <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">О Кинотеатре</a>
             <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-              <li><a href="#" class="dropdown-item">Новости</a></li>
-              <li><a href="#" class="dropdown-item">Реклама</a></li>
-              <li><a href="#" class="dropdown-item">Кафе</a></li>
-              <li><a href="#" class="dropdown-item">Мобильные приложения</a></li>
-              <li><a href="#" class="dropdown-item">Контакты</a></li>
+              <li><router-link :to="{name: 'siteAboutCinema'}" class="dropdown-item">О Кинотеатре</router-link></li>
+              <li><router-link :to="{name: 'siteNews'}" class="dropdown-item">Новости</router-link></li>
+              <li><router-link :to="{name: 'siteAdvertising'}" class="dropdown-item">Реклама</router-link></li>
+              <li><router-link :to="{name: 'siteCafe'}" class="dropdown-item">Кафе</router-link></li>
+              <li><router-link :to="{name: 'siteMobileApps'}" class="dropdown-item">Мобильные приложения</router-link></li>
+              <li><router-link :to="{name: 'siteContacts'}" class="dropdown-item">Контакты</router-link></li>
             </ul>
           </li>
         </ul>

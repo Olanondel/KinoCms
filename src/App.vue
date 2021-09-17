@@ -123,4 +123,10 @@ label {
 .general__button {
   margin: 0 15px;
 }
+
+.top-banner {
+  width: 100%;
+  object-fit: cover;
+  max-height: 560px;
+}
 </style>

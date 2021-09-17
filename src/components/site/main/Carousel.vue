@@ -13,7 +13,6 @@
         >
           <img class="img-fluid" :src="slide.image" alt="">
         </div>
-        ...
       </div>
       <!-- If we need pagination -->
       <div class="swiper-pagination"></div>
@@ -35,7 +34,13 @@ import 'swiper/swiper.min.css'
 
 export default {
   name: "Carousel",
-  props: ['slides', 'number', 'speed'],
+  props: {
+    slides: {
+      type: Array,
+    },
+    number: Number,
+    speed: Number
+  },
   data: () => ({
     swiper: null
   }),
