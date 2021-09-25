@@ -9,6 +9,9 @@
       </router-link>
     </td>
     <td>
+      {{data.cinema}}
+    </td>
+    <td>
       {{data.hall}}
     </td>
     <td>

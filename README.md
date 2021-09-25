@@ -1,5 +1,8 @@
 # new-proj
 
+### deploy
+https://kinocms-bc0b5.web.app
+
 ## Project setup
 ```
 npm install

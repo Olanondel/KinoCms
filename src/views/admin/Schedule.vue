@@ -7,6 +7,7 @@
         :index="index"
         :scheduleList="day[1]"
         :films="films"
+        :cinemas="cinemas"
         :date="day[0]"
         :isRemoveFetching="isRemoveFetching"
 
@@ -36,6 +37,7 @@ import ScheduleTable from "../../components/admin/schedule/ScheduleTable";
 import db from "../../firebase/firebaseInit";
 import {mapGetters} from "vuex";
 import server from '../../requests/admin/requests'
+import {getCinemas} from "../../requests/site";
 
 export default {
   name: "Schedule",
@@ -45,7 +47,8 @@ export default {
     films: [],
     wasChanged: false,
     isFetching: false,
-    isRemoveFetching: false
+    isRemoveFetching: false,
+    cinemas: []
   }),
   methods: {
     addDay() {
@@ -70,7 +73,7 @@ export default {
       this.wasChanged = true
     },
     changeDate(date, index) {
-      this.schedule[index][0]= date
+      this.schedule[index][0] = date
     },
     async getCurrentFilms() {
       let data = await db.collection('Films').doc('currentFilms')
@@ -104,7 +107,6 @@ export default {
       let docs = await server.getData('Schedule', null, this.currentLang)
 
       if (docs) {
-        console.log(docs)
 
         docs.forEach(el => {
           this.schedule.push([el.id, el.data().data])
@@ -118,7 +120,24 @@ export default {
       this.schedule.splice(index, 1)
 
       this.isRemoveFetching = false
+    },
+    async getCinemas() {
+      let docs = await getCinemas(this.currentLang)
+
+      let cinemas
+
+      if (docs && docs.length) {
+        cinemas = docs.map(doc => {
+          return {
+            title: doc.data().title,
+            id: doc.data().id
+          }
+        })
+      }
+
+      this.cinemas = cinemas
     }
+
   },
   computed: mapGetters(['currentLang']),
   watch: {
@@ -130,8 +149,8 @@ export default {
   },
   mounted() {
     this.getCurrentFilms()
-
     this.getData()
+    this.getCinemas()
   }
 }
 </script>

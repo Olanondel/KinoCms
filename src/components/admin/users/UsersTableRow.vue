@@ -21,15 +21,16 @@
     <td>{{data.nickname}}</td>
     <td>{{data.city}}</td>
     <td class="btns" v-if="!checkMode">
-      <router-link :to="{name: 'userEdit', params: { id: data.id, index }}"><i class="fa fa-edit"></i></router-link>
-      <a v-if="!data.isFetching" @click.prevent="$emit('remove', data.id, index)" href=""><i class="fa fa-trash-alt"></i></a>
-      <a @click.prevent v-else href=""><i class="fas fa-ban"></i></a>
-
+<!--      <router-link :to="{name: 'userEdit', params: { id: data.id, index }}"><i class="fa fa-edit"></i></router-link>-->
+<!--      <a v-if="!data.isFetching" @click.prevent="$emit('remove', data.id, index)" href=""><i class="fa fa-trash-alt"></i></a>-->
+<!--      <a @click.prevent v-else href=""><i class="fas fa-ban"></i></a>-->
     </td>
   </tr>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: "UsersTableRow",
   props: {
@@ -44,7 +45,8 @@ export default {
     },
     subId() {
       return (this.data.id ? this.data.id.substr(0, 3) : '')
-    }
+    },
+    ...mapGetters(['uid'])
   }
 }
 </script>

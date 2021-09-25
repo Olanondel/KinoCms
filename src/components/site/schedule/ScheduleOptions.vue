@@ -1,7 +1,7 @@
 <template>
-  <div class="form-group" v-if="options.length">
+  <div class="form-group">
     <select v-model="value" @input="$emit('input', $event.target.value)" class="form-control">
-      <option disabled value>{{text}}</option>
+      <option value="">{{text}}</option>
       <option
         v-for="(option, index) in options"
         :key="index"

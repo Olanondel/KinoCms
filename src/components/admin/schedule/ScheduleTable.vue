@@ -18,19 +18,21 @@
               <tr>
                 <th style="width: 200px">ВРЕМЯ</th>
                 <th>ФИЛЬМ</th>
+                <th style="width: 140px">Кинотеатр</th>
                 <th style="width: 140px">ЗАЛ</th>
                 <th style="width: 140px">ЦЕНА В ГРН</th>
               </tr>
               </thead>
               <tbody>
-                <ScheduleTableItem
-                  v-for="(item, index) in sortForTime('time', scheduleList)"
-                  :key="index"
-                  :index="index"
-                  :params=item
-                  @inputData="inputData"
-                  :films="films"
-                />
+              <ScheduleTableItem
+                v-for="(item, index) in sortForTime('time', scheduleList)"
+                :key="index"
+                :index="index"
+                :params=item
+                @inputData="inputData"
+                :films="films"
+                :cinemas="cinemas"
+              />
               </tbody>
             </table>
           </div>
@@ -50,6 +52,7 @@
 
 <script>
 import ScheduleTableItem from "./ScheduleTableItem";
+
 export default {
   name: "ScheduleTable",
   components: {ScheduleTableItem},
@@ -60,6 +63,7 @@ export default {
     },
     index: Number,
     films: Array,
+    cinemas: Array,
     date: String,
     isRemoveFetching: Boolean
   },
@@ -86,8 +90,6 @@ export default {
       let copy = [...arr]
 
       return copy.sort(function (a, b) {
-
-        console.log((a[prop]), (b[prop]))
 
         if (a[prop] < b[prop]) {
           return -1;

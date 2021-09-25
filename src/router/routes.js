@@ -103,6 +103,13 @@ export const routes = [
     meta: { layout: 'Site' }
   },
 
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('../views/Search'),
+    meta: { layout: 'Site' },
+  },
+
 
   {
     path: '/filmInfo/:id',

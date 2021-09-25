@@ -45,7 +45,8 @@ export default {
           phone: payload.phone,
           dob: payload.dob,
           city: payload.city,
-          confirmPassword: payload.password
+          confirmPassword: payload.password,
+          id: uid
         })
 
         dispatch('getCurrentUserData')

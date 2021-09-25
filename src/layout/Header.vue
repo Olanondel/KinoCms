@@ -39,9 +39,9 @@
         <!-- SEARCH FORM -->
         <form class="form-inline ml-0 ml-md-3">
           <div class="input-group input-group-sm">
-            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <input @keypress.prevent.enter="goSearch" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search" v-model="search">
             <div class="input-group-append">
-              <button class="btn btn-navbar" type="submit">
+              <button @click.prevent="goSearch" class="btn btn-navbar">
                 <i class="fas fa-search"></i>
               </button>
             </div>
@@ -88,7 +88,8 @@ export default {
   name: "Header",
   data() {
     return {
-      lang: this.currentLang
+      lang: this.currentLang,
+      search: ''
     }
   },
   computed: mapGetters(['currentLang', 'isAuth', 'isAdmin']),
@@ -98,7 +99,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['logout'])
+    ...mapActions(['logout']),
+    goSearch() {
+      if (!(this.$route.query.search && this.$route.query.search === this.search) && this.search) {
+        this.$router.push({name: 'search', query: { search: this.search }})
+      }
+    }
   },
   mounted() {
     this.lang = this.$store.state.lang.lang

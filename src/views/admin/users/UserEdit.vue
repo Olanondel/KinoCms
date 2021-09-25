@@ -3,30 +3,30 @@
     <div class="own-flex">
       <InputWithText text="Имя" v-model="firstName"/>
       <RadioWithText
-          text="Язык"
-          value1="ru"
-          text1="Русский"
-          id1="radio1"
-          value2="ua"
-          text2="Украинский"
-          id2="radio2"
-          name="radioname1"
-          :current="language"
+        text="Язык"
+        value1="ru"
+        text1="Русский"
+        id1="radio1"
+        value2="ua"
+        text2="Украинский"
+        id2="radio2"
+        name="radioname1"
+        :current="language"
       />
     </div>
 
     <div class="own-flex">
       <InputWithText text="Фамилия" v-model="lastName"/>
       <RadioWithText
-          text="Пол"
-          value1="male"
-          text1="Мужской"
-          id1="radio3"
-          value2="female"
-          text2="Женский"
-          id2="radio4"
-          name="radioname2"
-          :current="gender"
+        text="Пол"
+        value1="male"
+        text1="Мужской"
+        id1="radio3"
+        value2="female"
+        text2="Женский"
+        id2="radio4"
+        name="radioname2"
+        :current="gender"
       />
     </div>
 
@@ -122,26 +122,26 @@ export default {
 
       if (id) {
         let data = await server.getCurrentData(id, 'Users')
+        console.log(data)
 
         for (let key in data) {
           this[key] = data[key]
         }
-    }
-  },
-  getDate() {
-    let today = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = today.getFullYear();
+      }
+    },
+    getDate() {
+      let today = new Date();
+      let dd = String(today.getDate()).padStart(2, '0');
+      let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      let yyyy = today.getFullYear();
 
-    return today = dd + '-' + mm + '-' + yyyy;
-  },
-}
-,
-created()
-{
-  this.setData()
-}
+      return today = dd + '-' + mm + '-' + yyyy;
+    },
+  }
+  ,
+  mounted() {
+    this.setData()
+  }
 }
 </script>
 

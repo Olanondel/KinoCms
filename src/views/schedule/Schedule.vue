@@ -2,18 +2,37 @@
   <div class="content-wrapper" style="min-height: 1416px;">
     <div class="content container">
 
-      <PreloaderColor v-if="loading" />
+      <PreloaderColor v-if="loading"/>
       <!-- Content Header (Page header) -->
       <section class="content-header" v-else>
         <div class="container-fluid">
-          <div class="row mb-2">
+          <div class="row mb-3">
             <div class="col-sm-6">
               <h1>Расписание</h1>
             </div>
-            <div class="col-sm-6">
+          </div>
 
+          <div class="row mb-3">
+            <div class="col-4">
+              <ScheduleCheckbox v-model="showedFilms"/>
+            </div>
+
+            <div class="col-8 option-filters">
+              <div class="col-2">
+                <ScheduleOptions v-model="filtersFor.cinema" text="Кинотеатр" :options="cinemaList"/>
+              </div>
+              <div class="col-2">
+                <ScheduleOptions v-model="filtersFor.date" text="Дата" :options="dateList"/>
+              </div>
+              <div class="col-2">
+                <ScheduleOptions v-model="filtersFor.films" text="Фильм: все" :options="filmList"/>
+              </div>
+              <div class="col-2">
+                <ScheduleOptions v-model="filtersFor.hall" text="Зал: все" :options="hallList"/>
+              </div>
             </div>
           </div>
+
         </div><!-- /.container-fluid -->
       </section>
 
@@ -21,9 +40,9 @@
       <section class="content">
 
         <!-- Default box -->
-        <div class="card" v-for="card in schedule" :key="card[0]">
+        <div class="card" ref="card" v-for="card in filteredForDate" :key="card[0]">
           <div class="card-header">
-            <h3 class="card-title">{{card[0]}}</h3>
+            <h3 class="card-title">{{ card[0] }}</h3>
 
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -40,6 +59,9 @@
                 </th>
                 <th style="width: 25%">
                   ФИЛЬМ
+                </th>
+                <th style="width: 25%">
+                  Кинотеатр
                 </th>
                 <th style="width: 8%">
                   ЗАЛ
@@ -80,14 +102,25 @@ import server from "../../requests/admin/requests";
 import {mapGetters} from "vuex";
 import ScheduleTableRow from "../../components/site/schedule/ScheduleTableRow";
 import PreloaderColor from "../../components/site/preloader/Preloader-color";
+import ScheduleOptions from "../../components/site/schedule/ScheduleOptions";
+import ScheduleCheckbox from "../../components/site/schedule/ScheduleCheckbox";
+import filmServer from '../../requests/affiche&soon/requests'
 
 export default {
   name: "SiteSchedule",
-  components: {PreloaderColor, ScheduleTableRow},
+  components: {ScheduleCheckbox, ScheduleOptions, PreloaderColor, ScheduleTableRow},
   data() {
     return {
       schedule: [],
-      loading: true
+      loading: true,
+      filtersFor: {
+        cinema: '',
+        date: '',
+        films: '',
+        hall: ''
+      },
+      showedFilms: [],
+      filmData: null
     }
   },
   methods: {
@@ -100,7 +133,29 @@ export default {
         })
       }
 
+      await this.getFilms()
+
+      this.schedule = this.schedule.map(el => {
+        return [el[0], el[1] = el[1].map(el => {
+          let films = this.filmData.filter(film => film.id === el.filmId)
+          console.log('films', films)
+
+          if (films.length) {
+            console.log('ataka titanov', films[0].types)
+            return {...el, types: films[0].types}
+          }
+
+          return {...el, types: []}
+        })]
+      })
+
       this.loading = false
+    },
+    async getFilms() {
+      let current = await filmServer.getFutureFilms(this.currentLang)
+      let future = await filmServer.getFilms(this.currentLang)
+
+      this.filmData = [...current, ...future]
     },
     sortForTime(prop, arr) {
 
@@ -125,6 +180,90 @@ export default {
   },
   computed: {
     ...mapGetters(['currentLang']),
+    scheduleList() {
+      let arr = this.schedule.map(el => el[1])
+
+      return arr.flat()
+    },
+    dateList() {
+      return this.schedule.map(el => {
+        return el[0]
+      })
+    },
+    cinemaList() {
+      let arr = []
+
+      this.scheduleList.forEach(el => {
+        if (!arr.includes(el.cinema)) {
+          arr.push(el.cinema)
+        }
+      })
+
+      return arr
+    },
+    hallList() {
+      let arr = []
+
+      if (this.filtersFor.cinema.length) {
+        this.scheduleList.forEach(el => {
+          if (!arr.includes(el.hall) && el.cinema === this.filtersFor.cinema && el.hall.length) {
+            arr.push(el.hall)
+          }
+        })
+      }
+
+      return arr
+    },
+    filmList() {
+      let arr = []
+
+      this.scheduleList.forEach(el => {
+        if (!arr.includes(el.film)) {
+          arr.push(el.film)
+        }
+      })
+
+      return arr
+    },
+    filteredForDate() {
+      let arr = [...this.schedule]
+
+      if (this.filtersFor.date.length) {
+        arr = this.schedule.filter(el => el[0] === this.filtersFor.date)
+      }
+
+      if (this.filtersFor.cinema.length) {
+        arr = arr.map(el => {
+          return [el[0], el[1].filter(el => el.cinema === this.filtersFor.cinema)]
+        })
+      }
+
+      if (this.filtersFor.films.length) {
+        arr = arr.map(el => {
+          return [el[0], el[1].filter(el => el.film === this.filtersFor.films)]
+        })
+      }
+
+      if (this.filtersFor.hall.length) {
+        arr = arr.map(el => {
+          return [el[0], el[1].filter(el => el.hall === this.filtersFor.hall)]
+        })
+      }
+
+      if (this.showedFilms.length) {
+        arr = arr.map(schedule => {
+          return [schedule[0], schedule[1].filter(el => {
+            let arr = el.types.filter(type => {
+              return this.showedFilms.includes(type.toUpperCase())
+            })
+
+            return arr.length
+          })]
+        })
+      }
+
+      return arr
+    },
   },
   mounted() {
     this.getData()
@@ -133,5 +272,7 @@ export default {
 </script>
 
 <style scoped>
-
+.option-filters {
+  display: flex;
+}
 </style>
