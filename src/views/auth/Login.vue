@@ -70,11 +70,15 @@ export default {
   methods: {
     ...mapActions(['login']),
     async loginWithRedirect() {
-      try {
-        await this.login({email: this.email, password: this.password})
+      if (this.email && this.password) {
+        try {
+          await this.login({email: this.email, password: this.password})
 
-        await this.$router.push('/')
-      } catch (e) { console.log(e) }
+          await this.$router.push('/')
+        } catch (e) { console.log(e) }
+      } else {
+        alert('Заполните все поля!')
+      }
     }
   },
   mounted() {

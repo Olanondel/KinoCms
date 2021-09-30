@@ -93,15 +93,26 @@ export default {
       }
     },
     async saveData() {
-      this.isFetching = true
+      let allFilms = this.schedule.map(el => el[1])
+      allFilms = allFilms.flat()
 
-      await Promise.all(this.schedule.map(async el => {
-        let data = el[1]
+      let correctArray = allFilms.filter(el => {
+        return !(el.cinemaId.length && el.cinema.length && el.filmId.length && el.film.length && el.hall.length && el.hallId.length && el.time.length && el.price.length)
+      })
 
-        await server.saveToDb({data}, 'Schedule', el[0], this.currentLang)
-      }))
+      if (!correctArray.length) {
+        this.isFetching = true
 
-      this.isFetching = false
+        await Promise.all(this.schedule.map(async el => {
+          let data = el[1]
+
+          await server.saveToDb({data}, 'Schedule', el[0], this.currentLang)
+        }))
+
+        this.isFetching = false
+      } else {
+        alert('Заполните все поля!')
+      }
     },
     async getData() {
       let docs = await server.getData('Schedule', null, this.currentLang)
@@ -139,7 +150,9 @@ export default {
     }
 
   },
-  computed: mapGetters(['currentLang']),
+  computed: {
+    ...mapGetters(['currentLang']),
+  },
   watch: {
     currentLang() {
       this.getCurrentFilms()

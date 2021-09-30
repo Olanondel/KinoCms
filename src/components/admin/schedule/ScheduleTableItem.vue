@@ -8,7 +8,8 @@
         type="text"
         placeholder="название фильма"
         class="form-control"
-        v-model="film" @input="inputData"
+        v-model="film"
+        @input="nullData"
         @click="showSearch"
       >
 
@@ -24,9 +25,9 @@
       </ul>
     </td>
     <td>
-      <input type="text" class="form-control cinema-input" v-model="cinema">
+      <input type="text" @input="nullCinema" @focus="isShowCinemaList" class="form-control cinema-input" v-model="cinema">
 
-      <ul class="cinema-list" v-if="filteredCinemas.length">
+      <ul class="cinema-list" v-if="filteredCinemas.length && this.filmId && this.showCinemaList">
         <li
           v-for="(item, index) in filteredCinemas"
           :key="item.id"
@@ -38,9 +39,9 @@
       </ul>
     </td>
     <td>
-      <input @focus="showHallList = true" type="text" class="form-control" v-model="hall" @input="inputData">
+      <input @click="showHallListMethod" type="text" class="form-control" v-model="hall" @input="nullHall">
 
-      <ul class="cinema-list" v-if="halls.length && showHallList">
+      <ul class="cinema-list" v-if="halls.length && showHallList && this.cinemaId">
         <li
           v-for="hall in halls"
           :key="hall.id"
@@ -86,9 +87,34 @@ export default {
       showList: false,
       halls: [],
       showHallList: false,
+      showCinemaList: false
     }
   },
   methods: {
+    nullCinema() {
+      this.cinemaId = ''
+      this.cinema = ''
+      this.hallId = ''
+      this.hall = ''
+    },
+    nullHall() {
+      this.hallId = ''
+      this.hall = ''
+    },
+    isShowCinemaList() {
+      this.showCinemaList = !this.showCinemaList
+    },
+    nullData() {
+      this.hall = ''
+      this.hallId = ''
+      this.cinema = ''
+      this.cinemaId = ''
+      this.film = ''
+      this.filmId = ''
+    },
+    async getHallsForCinema() {
+      this.halls = await getHalls(this.currentLang, this.cinemaId)
+    },
     setHall(hall) {
       this.hall = hall.hallNumber
       this.hallId = hall.id
@@ -97,7 +123,6 @@ export default {
       this.inputData()
     },
     inputData() {
-      console.log(this.cinema)
 
       this.$emit('inputData', {time: this.time, film: this.film, filmId: this.filmId, cinema: this.cinema, cinemaId: this.cinemaId, hall: this.hall, hallId: this.hallId, price: this.price,}, this.index)
     },
@@ -116,16 +141,21 @@ export default {
       this.showList = true
     },
     async setCinema(index) {
+      this.hall = ''
+      this.hallId = ''
 
+      let el = this.filteredCinemas[index]
 
-      this.cinema = this.filteredCinemas[index].title
-      this.cinemaId = this.filteredCinemas[index].id
+      this.cinema = el.title
+      this.cinemaId = el.id
 
       this.inputData()
 
-      this.halls = await getHalls(this.currentLang, this.filteredCinemas[index].id)
+      this.halls = await getHalls(this.currentLang, el.id)
     },
-
+    showHallListMethod() {
+      this.showHallList = true
+    }
   },
   computed: {
     filmsList() {
@@ -134,6 +164,8 @@ export default {
       return values.filter(el => el.title.toLowerCase().trim().startsWith(this.film.toLowerCase()))
     },
     filteredCinemas() {
+      if (!this.cinema) { return this.cinemas }
+
       let arr = []
       let ready = false
 
@@ -156,14 +188,18 @@ export default {
     ...mapGetters(['currentLang'])
   },
   watch: {
+    hall() {
+      this.inputData()
+    },
     film() {
-
+      this.inputData()
     },
     cinema() {
       this.inputData()
     }
   },
   mounted() {
+    this.getHallsForCinema()
   }
 }
 </script>
