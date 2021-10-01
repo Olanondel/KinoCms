@@ -102,6 +102,11 @@ export default {
       }
     },
     async saveData() {
+      if (this.schedule.some(el => !el[0].length)) {
+        alert('Заполните все поля!')
+        return
+      }
+
       let allFilms = this.schedule.map(el => el[1])
       allFilms = allFilms.flat()
 
@@ -139,9 +144,13 @@ export default {
     },
     async removeDay(index) {
       this.isRemoveFetching = true
-      await server.removeSchedule(this.currentLang, this.schedule[index][0])
+      try {
+        await server.removeSchedule(this.currentLang, this.schedule[index][0])
 
-      this.schedule.splice(index, 1)
+        this.schedule.splice(index, 1)
+      } catch (e) {
+        this.schedule.splice(index, 1)
+      }
 
       this.isRemoveFetching = false
     },
