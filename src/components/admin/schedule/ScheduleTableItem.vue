@@ -196,6 +196,9 @@ export default {
     },
     cinema() {
       this.inputData()
+    },
+    time() {
+      this.$emit('changeTime', this.index)
     }
   },
   mounted() {

@@ -1,9 +1,14 @@
 <template>
   <div class="wrapper">
-    <section class="schedule content-wrapper content">
+    <template v-if="loading">
+      <Preloader />
+      <div class="content-wrapper"></div>
+    </template>
+
+    <section class="schedule content-wrapper content" v-else>
       <ScheduleTable
         v-for="(day, index) in schedule"
-        :key="index"
+        :key="day[2]"
         :index="index"
         :scheduleList="day[1]"
         :films="films"
@@ -38,33 +43,37 @@ import db from "../../firebase/firebaseInit";
 import {mapGetters} from "vuex";
 import server from '../../requests/admin/requests'
 import {getCinemas} from "../../requests/site";
+import Preloader from "../../components/admin/general/Preloader";
 
 export default {
   name: "Schedule",
-  components: {ScheduleTable},
+  components: {Preloader, ScheduleTable},
   data: () => ({
     schedule: [],
     films: [],
     wasChanged: false,
     isFetching: false,
     isRemoveFetching: false,
-    cinemas: []
+    cinemas: [],
+    loading: true
   }),
   methods: {
     addDay() {
-      this.schedule.push(['', [{
-        time: '',
-        film: '',
-        hall: '',
-        price: ''
-      }]])
+      this.schedule.push(['', [],
+          Math.random(),
+      ])
     },
     addFilm(index) {
       this.schedule[index][1].push({
+        id: Math.random(),
         time: '',
+        price: '',
+        cinema: '',
+        cinemaId: '',
         film: '',
+        filmId: '',
         hall: '',
-        price: ''
+        hallId: ''
       })
     },
     inputData(payload, filmIndex, dayIndex) {
@@ -110,8 +119,10 @@ export default {
         }))
 
         this.isFetching = false
+        this.wasChanged = false
       } else {
         alert('Заполните все поля!')
+        this.wasChanged = false
       }
     },
     async getData() {
@@ -123,6 +134,8 @@ export default {
           this.schedule.push([el.id, el.data().data])
         })
       }
+
+      this.loading = false
     },
     async removeDay(index) {
       this.isRemoveFetching = true

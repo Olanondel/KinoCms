@@ -25,10 +25,10 @@
               </thead>
               <tbody>
               <ScheduleTableItem
-                v-for="(item, index) in sortForTime('time', scheduleList)"
-                :key="index"
+                v-for="(item, index) in scheduleList"
+                :key="item.id"
                 :index="index"
-                :params=item
+                :params='item'
                 @inputData="inputData"
                 :films="films"
                 :cinemas="cinemas"
